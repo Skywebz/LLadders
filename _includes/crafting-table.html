@@ -1,0 +1,103 @@
+        <div style="left:0px; top:0px; width:260px; height:134px; position:relative;">
+          <div style="left:0px; width:260px; height:134px;">
+            <img width="260" height="134" src="{{ page.base_url }}assets/crafting-table.png" alt=""></img>
+          </div>  
+{% if craft.c1 %}		  
+          <div class="cell" style="left:16px; top:16px;">
+            <a title="{{ craft.c1-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c1 }}.png" alt="{{ craft.c1-a }}"></img>
+            </a>
+{% if craft.c1-n %}
+            <span class="number">{{ craft.c1-n }}</span>
+{% endif %}
+          </div>
+{% endif %}
+{% if craft.c2 %}
+          <div class="cell" style="left:52px; top:16px;">
+            <a title="{{ craft.c2-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c2 }}.png" alt="{{ craft.c2-a }}"></img>
+            </a>
+{% if craft.c2-n %}
+            <span class="number">{{ craft.c2-n }}</span>
+{% endif %}
+          </div>
+{% endif %}
+{% if craft.c3 %}
+          <div class="cell" style="left:88px; top:16px;">
+            <a title="{{ craft.c3-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c3 }}.png" alt="{{ craft.c3-a }}"></img>
+            </a>
+{% if craft.c3-n %}
+            <span class="number">{{ craft.c3-n }}</span>
+{% endif %}
+          </div>
+{% endif %}
+{% if craft.c4 %}
+          <div class="cell" style="left:16px; top:52px;">
+            <a title="{{ craft.c4-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c4 }}.png" alt="{{ craft.c4-a }}"></img>
+            </a>
+{% if craft.c4-n %}
+            <span class="number">{{ craft.c4-n }}</span>
+{% endif %}
+          </div>
+{% endif %}
+{% if craft.c5 %}
+		  <div class="cell" style="left:52px; top:52px;">
+            <a title="{{ craft.c5-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c5 }}.png" alt="{{ craft.c5-a }}"></img>
+            </a>
+{% if craft.c5-n %}
+            <span class="number">{{ craft.c5-n }}</span>
+{% endif %}
+          </div>
+{% endif %}
+{% if craft.c6 %}
+          <div class="cell" style="left:88px; top:52px;">
+            <a title="{{ craft.c6-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c6 }}.png" alt="{{ craft.c6-a }}"></img>
+            </a>
+{% if craft.c6-n %}
+            <span class="number">{{ craft.c6-n }}</span>
+{% endif %}
+          </div>
+{% endif %}
+{% if craft.c7 %}
+          <div class="cell" style="left:16px; top:88px;">
+            <a title="{{ craft.c7-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c7 }}.png" alt="{{ craft.c7-a }}"></img>
+            </a>
+{% if craft.c7-n %}
+            <span class="number">{{ craft.c7-n }}</span>
+{% endif %}
+          </div>
+{% endif %}
+{% if craft.c8 %}
+          <div class="cell" style="left:52px; top:88px;">
+            <a title="{{ craft.c8-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c8 }}.png" alt="{{ craft.c8-a }}"></img>
+            </a>
+{% if craft.c8-n %}
+            <span class="number">{{ craft.c8-n }}</span>
+{% endif %}
+          </div>	
+{% endif %}
+{% if craft.c9 %}
+          <div class="cell" style="left:88px; top:88px;">
+            <a title="{{ craft.c9-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c9 }}.png" alt="{{ craft.c9-a }}"></img>
+            </a>
+{% if craft.c9-n %}
+            <span class="number">{{ craft.c9-n }}</span>
+{% endif %}
+          </div>		  
+{% endif %}
+          <div class="cell" style="left:204px; top:52px;">
+            <a title="{{ craft.out-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.out }}.png" alt="{{ craft.out-a }}"></img>
+            </a>
+{% if craft.out-n %}
+            <span class="number">{{ craft.out-n }}</span>
+{% endif %}
+          </div>
+        </div>

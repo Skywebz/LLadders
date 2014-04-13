@@ -1,0 +1,18 @@
+- type: crafting-table
+  out: blocks/tile.lladders.block.ropeladder
+  out-a: Rope Ladder
+  out-n: 6
+  c1: vine
+  c1-a: Vines
+  c3: vine
+  c3-a: Vines
+  c4: oakplank
+  c4-a: Oak Planks
+  c5: oakplank
+  c5-a: Oak Planks
+  c6: oakplank
+  c6-a: Oak Planks
+  c7: vine
+  c7-a: Vines
+  c9: vine
+  c9-a: Vines

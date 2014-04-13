@@ -1,0 +1,18 @@
+- type: crafting-table
+  out: blocks/tile.lladders.block.sturdyladder
+  out-a: Sturdy Ladder
+  out-n: 16
+  c1: iron_ingot
+  c1-a: Iron Ingot
+  c3: iron_ingot
+  c3-a: Iron Ingot
+  c4: iron_ingot
+  c4-a: Iron Ingot
+  c5: oakplank
+  c5-a: Oak Plank
+  c6: iron_ingot
+  c6-a: Iron Ingot
+  c7: iron_ingot
+  c7-a: Iron Ingot
+  c9: iron_ingot
+  c9-a: Iron Ingot

@@ -1,0 +1,18 @@
+---
+layout: default
+title: Luppii's Ladders - Download
+base_url: "../"
+mod_releases:
+ - ["http://www.curseforge.com/media/files/782/156/Ladders_0.1.0.jar", "Ladders_0.1.0.jar (MC 1.7.2)", "../Releases/1.7.2/Ladders-0.1.0.jar"]
+ - ["http://www.curseforge.com/media/files/782/156/Ladders_0.1.0.jar", "Ladders_0.1.0.jar (MC 1.6.4)", "../Releases/1.6.4/Ladders-0.1.0.jar"]
+---
+
+<div id="home">
+  <h1>Download</h1>
+  <p>You may download and use the releases as you wish. Be aware that the mod is under rapid development and features may change frequently.</p>
+  <p>
+{% for jar in page.mod_releases %}
+    <a href="{{ jar[0] }}">{{ jar[1] }}</a>{% if jar[2] %} (<a href="{{ jar[2] }}">Mirror</a>){% endif %}<br />
+{% endfor %}
+  </p>
+</div>

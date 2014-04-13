@@ -1,0 +1,65 @@
+---
+layout: default
+title: Luppii's Ladders - Crafting recipes
+base_url: "../"
+---
+<div id="top">
+  <ol class="quicknav">
+    <li><a href="#ladders">Ladders</a></li>
+    <li><a href="#machines">Machines</a></li>
+  </ol>
+</div>
+<div id="ladders"><h1>Ladders</h1></div>
+<table class="recipetable">
+  <tbody>
+{% assign i = 0 %}
+{% for craft in site.data.cr-ladders %}
+    <tr>
+      <td style="float:left">
+{% if craft.type == "furnace"> %}
+{% include furnace.html %}
+{% elsif craft.type == "crafting-table" %}
+{% include crafting-table.html %}
+{% endif %}
+      </td>
+{% for craft in site.data.cr-ladders-alt limit:1 offset:i %}
+{% capture i %}{{ i | plus:1 }}{% endcapture %}
+      <td style="float:left">
+{% if craft.type == "furnace"> %}
+{% include furnace.html %}
+{% elsif craft.type == "crafting-table" %}
+{% include crafting-table.html %}
+{% endif %}
+{% endfor %}
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+
+
+<div id="machines"><h1>Machines</h1></div>
+<table class="recipetable">
+  <tbody>
+{% assign i = 0 %}
+{% for craft in site.data.cr-machines %}
+    <tr>
+      <td style="float:left">
+{% if craft.type == "furnace"> %}
+{% include furnace.html %}
+{% elsif craft.type == "crafting-table" %}
+{% include crafting-table.html %}
+{% endif %}
+      </td>
+{% for craft in site.data.cr-machines-alt limit:1 offset:i %}
+{% capture i %}{{ i | plus:1 }}{% endcapture %}
+      <td style="float:left">
+{% if craft.type == "furnace"> %}
+{% include furnace.html %}
+{% elsif craft.type == "crafting-table" %}
+{% include crafting-table.html %}
+{% endif %}
+{% endfor %}
+    </tr>
+{% endfor %}
+  </tbody>
+</table>

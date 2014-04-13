@@ -1,0 +1,54 @@
+- type: crafting-table
+  out: items/item.greenmod.sword.ruby
+  out-a: Ruby Sword
+  out-n: 
+  c1: 
+  c1-a: 
+  c1-n: 
+  c2: items/item.greenmod.gem.ruby
+  c2-a: Ruby
+  c2-n: 
+  c3: 
+  c3-a: 
+  c3-n: 
+  c4: 
+  c4-a: 
+  c4-n: 
+  c5: items/item.greenmod.gem.ruby
+  c5-a: Ruby
+  c5-n: 
+  c6: 
+  c6-a: 
+  c6-n: 
+  c7: 
+  c7-a: 
+  c7-n: 
+  c8: stick
+  c8-a: Stick
+  c8-n: 
+  c9: 
+  c9-a: 
+  c9-n: 
+
+- type: furnace
+  out: Block
+  out-a: Block
+  out-n: 
+  c1: Block 
+  c1-a: Block
+  c1-n: 
+  c2: stick
+  c2-a: Stick
+  c2-n: 
+
+- type: furnace
+  out: stick
+  out-a: Stick
+  out-n: 8
+  c1: coal
+  c1-a: Coal
+  c1-n:
+  c2: Block
+  c2-a: Block
+  c2-n: 
+ 

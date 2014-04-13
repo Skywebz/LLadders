@@ -1,0 +1,21 @@
+- type: crafting-table
+  out: blocks/ladderdispenser
+  out-a: Ladder Dispenser
+  c1: iron_ingot
+  c1-a: Iron Ingot
+  c2: iron_ingot
+  c2-a: Ruby
+  c3: iron_ingot
+  c3-a: Iron Ingot
+  c4: iron_ingot
+  c4-a: Iron Ingot
+  c5: redstone
+  c5-a: Redstone
+  c6: iron_ingot
+  c6-a: Iron Ingot
+  c7: iron_ingot
+  c7-a: Iron Ingot
+  c8: blocks/tile.lladders.block.ropeladder
+  c8-a: Rope Ladder
+  c9: iron_ingot
+  c9-a: Iron Ingot

@@ -1,0 +1,7 @@
+name: Luppii's Ladders
+description: ""
+
+markdown: redcarpet
+permalink: /blog/:year/:month/:day/:title
+pygments: true
+relative_permalinks: false

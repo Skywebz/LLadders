@@ -1,0 +1,29 @@
+        <div style="left:0px; top:0px; width:196px; height:136px; position:relative;">
+          <div style="left:0px; width:196px; height:136px;">
+            <img width="196" height="136" src="{{ page.base_url }}assets/furnace.png" alt=""></img>
+          </div>
+          <div class="cell" style="left:15px; top:16px;">
+            <a title="{{ craft.c1-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c1 }}.png" alt="{{ craft.c1-a }}"></img>
+            </a>
+{% if craft.c1-n %}
+            <span class="number">{{ craft.c1-n }}</span>
+{% endif %}
+          </div>
+          <div class="cell" style="left:15px; top:88px;">
+            <a title="{{ craft.c2-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.c2 }}.png" alt="{{ craft.c2-a }}"></img>
+            </a>
+{% if craft.c2-n %}
+            <span class="number">{{ craft.c2-n }}</span>
+{% endif %}
+          </div>
+          <div class="cell" style="left:135px; top:52px;">
+            <a title="{{ craft.out-a }}" href="#">
+              <img width="32" height="32" src="{{ page.base_url }}assets/{{ craft.out }}.png" alt="{{ craft.out-a }}"></img>
+            </a>
+{% if craft.out-n %}
+            <span class="number">{{ craft.out-n }}</span>
+{% endif %}
+          </div>
+        </div>
