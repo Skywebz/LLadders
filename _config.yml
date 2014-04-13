@@ -1,5 +1,6 @@
 name: Luppii's Ladders
 description: ""
+url: http://ladders.luppii.se/
 
 markdown: redcarpet
 permalink: /blog/:year/:month/:day/:title
