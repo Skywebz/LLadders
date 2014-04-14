@@ -1,0 +1,12 @@
+[
+    {
+        "modid": "LLadders",
+        "name": "Luppii's Ladders",
+        "url": "http://ladders.luppii.se",
+        "credits": "",
+        "version": "${version}",
+        "mcversion": "${mcversion}",
+        "authorList": [ "Luppii" ],
+        "description": "Ladders!"
+    }
+]
