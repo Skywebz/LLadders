@@ -16,6 +16,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -148,6 +149,20 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 	}
 	
 	@Override
+	public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer) {
+		
+		if (par5EntityPlayer.getCurrentEquippedItem() != null && par5EntityPlayer.getCurrentEquippedItem().isItemEqual(new ItemStack(this))) {
+			
+			int meta = par1World.getBlockMetadata(par2, par3, par4) & 3;
+						
+			if (canSetLadder(par1World, par2, par3 - 1, par4, meta)) {
+				
+				setLadder(par1World, par2, par3 - 1, par4, meta, par5EntityPlayer);
+			}
+		}
+	}
+	
+	@Override
 	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, Block par5Block) {
 		
 		int metadata = par1World.getBlockMetadata(par2, par3, par4) & 3;
@@ -235,5 +250,42 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 	public TileEntity createNewTileEntity(World var1, int var2) {
 		
 		return new TileEntityRopeLadder();
+	}
+	
+	private boolean canSetLadder(World world, int x, int y, int z, int meta) {
+		
+		if (world.getBlock(x, y, z) == this) {
+			
+			return canSetLadder(world, x, y - 1, z, meta);
+		}
+		else if (!world.isAirBlock(x, y, z)) {
+			
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean setLadder(World world, int x, int y, int z, int meta, EntityPlayer player) {
+		
+		Block block = world.getBlock(x, y, z);
+		if (world.isAirBlock(x, y, z)) {
+			
+			ItemStack item = player.getCurrentEquippedItem();
+			if (item.stackSize > 1) {
+				
+				player.setCurrentItemOrArmor(0, new ItemStack(item.getItem(), item.stackSize - 1, item.getItemDamage()));
+			}
+			else {
+				
+				player.setCurrentItemOrArmor(0, null);
+			}
+			world.setBlock(x, y, z, this, meta, 2);
+			return true;
+		}
+		if (block == this) {
+			
+			return setLadder(world, x, y - 1, z, meta, player);
+		}
+		return false;
 	}
 }
