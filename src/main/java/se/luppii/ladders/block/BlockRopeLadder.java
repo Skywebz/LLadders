@@ -28,15 +28,17 @@ import net.minecraft.world.World;
 public class BlockRopeLadder extends Block implements ITileEntityProvider {
 
 	private IIcon blockIIcon;
+	private boolean enableLeftClick;
 	public static int renderID;
 	
-	public BlockRopeLadder() {
+	public BlockRopeLadder(boolean par1Boolean) {
 		
 		super(Material.circuits);
 		this.setHardness(0.4F);
 		this.setStepSound(soundTypeLadder);
 		this.setBlockName("lladders.block.ropeladder");
 		this.setCreativeTab(CreativeTabs.tabDecorations);
+		enableLeftClick = par1Boolean;
 	}
 	
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4) {		
@@ -151,13 +153,15 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 	@Override
 	public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer) {
 		
-		if (par5EntityPlayer.getCurrentEquippedItem() != null && par5EntityPlayer.getCurrentEquippedItem().isItemEqual(new ItemStack(this))) {
-			
-			int meta = par1World.getBlockMetadata(par2, par3, par4) & 3;
-						
-			if (canSetLadder(par1World, par2, par3 - 1, par4, meta)) {
+		if (enableLeftClick) {
+			if (par5EntityPlayer.getCurrentEquippedItem() != null && par5EntityPlayer.getCurrentEquippedItem().isItemEqual(new ItemStack(this))) {
 				
-				setLadder(par1World, par2, par3 - 1, par4, meta, par5EntityPlayer);
+				int meta = par1World.getBlockMetadata(par2, par3, par4) & 3;
+							
+				if (canSetLadder(par1World, par2, par3 - 1, par4, meta)) {
+					
+					setLadder(par1World, par2, par3 - 1, par4, meta, par5EntityPlayer);
+				}
 			}
 		}
 	}

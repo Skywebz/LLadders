@@ -49,8 +49,8 @@ public class LLadders {
 		Config.loadConfig(e);
 		
 		blockLadderDispenser = new BlockLadderDispenser();
-		blockRopeLadder = new BlockRopeLadder();
-		blockSturdyLadder = new BlockSturdyLadder();
+		blockRopeLadder = new BlockRopeLadder(Config.ropeLadderLeftClick.getBoolean(true));
+		blockSturdyLadder = new BlockSturdyLadder(Config.sturdyLadderLeftClick.getBoolean(true));
 		
 		checkForUpdates = Config.checkForUpdates.getBoolean(true);
 		
