@@ -54,8 +54,8 @@ public class LLadders {
 		conf.loadConfig(e);
 		
 		blockLadderDispenser = new BlockLadderDispenser(conf.blockLadderDispenser.getInt());
-		blockRopeLadder = new BlockRopeLadder(conf.blockRopeLadder.getInt());
-		blockSturdyLadder = new BlockSturdyLadder(conf.blockSturdyLadder.getInt());
+		blockRopeLadder = new BlockRopeLadder(conf.blockRopeLadder.getInt(), conf.ropeLadderLeftClick.getBoolean(true));
+		blockSturdyLadder = new BlockSturdyLadder(conf.blockSturdyLadder.getInt(), conf.sturdyLadderLeftClick.getBoolean(true));
 		
 		checkForUpdates = conf.checkForUpdates.getBoolean(true);
 	}

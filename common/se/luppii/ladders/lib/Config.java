@@ -13,6 +13,10 @@ public class Config {
 	public static Property blockSturdyLadder;
 	
 	// Settings
+	public static Property sturdyLadderLeftClick;
+	public static Property ropeLadderLeftClick;
+	
+	// Updater
 	public static Property checkForUpdates;
 	
 	public static void loadConfig(FMLPreInitializationEvent e) {
@@ -28,6 +32,10 @@ public class Config {
 			blockSturdyLadder = config.get(config.CATEGORY_BLOCK, "ID.Block.SturdyLadder", 681);
 			
 			// Settings
+			sturdyLadderLeftClick = config.get(config.CATEGORY_GENERAL, "Sturdy Ladder extend on left click", true);
+			ropeLadderLeftClick = config.get(config.CATEGORY_GENERAL, "Rope Ladder extend on left click", true);
+			
+			// Updater
 			checkForUpdates = config.get(config.CATEGORY_GENERAL, "Check for updates", true);
 			
 			config.save();

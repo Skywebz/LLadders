@@ -16,6 +16,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -27,15 +28,17 @@ import net.minecraft.world.World;
 public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 	
 	private Icon blockIcon;
+	private boolean enableLeftClick;
 	public static int renderID;
 	
-	public BlockSturdyLadder(int par1) {
+	public BlockSturdyLadder(int par1,  boolean par2Boolean) {
 		
 		super(par1, Material.circuits);
 		this.setHardness(0.4F);
 		this.setStepSound(soundLadderFootstep);
 		this.setUnlocalizedName("lladders.block.sturdyladder");
 		this.setCreativeTab(CreativeTabs.tabDecorations);
+		enableLeftClick = par2Boolean;
 	}
 	
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4) {		
@@ -160,6 +163,22 @@ public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 	}
 	
 	@Override
+	public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer) {
+		
+		if (enableLeftClick) {
+			
+			if (par5EntityPlayer.getCurrentEquippedItem() != null && par5EntityPlayer.getCurrentEquippedItem().isItemEqual(new ItemStack(this))) {
+				
+				int meta = par1World.getBlockMetadata(par2, par3, par4) & 3;
+				if (canSetLadder(par1World, par2, par3 + 1, par4, meta)) {
+					
+					setLadder(par1World, par2, par3 + 1, par4, meta, par5EntityPlayer);
+				}
+			}
+		}
+	}
+	
+	@Override
 	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5) {
 		
 		int metadata = par1World.getBlockMetadata(par2, par3, par4) & 3;
@@ -243,5 +262,42 @@ public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 			FMLLog.severe(References.MOD_NAME, "Unable to create TileEntitySturdyLadder instance.");
 			return null;
 		}
+	}
+	
+	private boolean canSetLadder(World world, int x, int y, int z, int meta) {
+		
+		if (world.getBlockId(x, y, z) == this.blockID) {
+			
+			return canSetLadder(world, x, y + 1, z, meta);
+		}
+		else if (!world.isAirBlock(x, y, z)) {
+			
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean setLadder(World world, int x, int y, int z, int meta, EntityPlayer player) {
+		
+		int id = world.getBlockId(x, y, z);
+		if (world.isAirBlock(x, y, z)) {
+			
+			ItemStack item = player.getCurrentEquippedItem();
+			if (item.stackSize > 1) {
+				
+				player.setCurrentItemOrArmor(0, new ItemStack(item.getItem(), item.stackSize - 1, item.getItemDamage()));
+			}
+			else {
+				
+				player.setCurrentItemOrArmor(0, null);
+			}
+			world.setBlock(x, y, z, this.blockID, meta, 2);
+			return true;
+		}
+		if (id == this.blockID) {
+			
+			return setLadder(world, x, y + 1, z, meta, player);
+		}
+		return false;
 	}
 }
