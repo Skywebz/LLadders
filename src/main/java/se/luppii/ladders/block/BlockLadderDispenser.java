@@ -143,10 +143,10 @@ public class BlockLadderDispenser extends BlockContainer {
 	
 	public TileEntity getBlockEntity(int par1) {
 		
-        switch(par1) {    
-        	case 0: return new TileEntityLadderDispenser();
-        }
-        return null;
+		switch(par1) {
+			case 0: return new TileEntityLadderDispenser();
+		}
+		return null;
 	}
 	
 	@Override
@@ -155,9 +155,13 @@ public class BlockLadderDispenser extends BlockContainer {
 		
 		switch (par2) {
 			case 0:
-				if (par1 > 0) {
+				if (par1 == 0) {
+					
+					par1 = 2;
+				}
+				else {
 					par1 += 3;
-					if (par1 == 7) {
+					if (par1 == 6) {
 						
 						par1 = 5;
 					}
