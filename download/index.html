@@ -19,7 +19,8 @@ old-releases:
 {% endfor %}
   </p>
   <p>
-    <h3>Older versions</h3>
+    <h4>Older versions</h4>
+    <h5>Older versions</h5>
     <p>These versions are kept for some time for compability, but are not recommended to use any more.</p>
 {% for jar in page.old-releases %}
     <a href="{{ jar[0] }}">{{ jar[1] }}</a>{% if jar[2] %} (<a href="{{ jar[2] }}">Mirror</a>){% endif %}<br />
