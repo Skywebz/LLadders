@@ -12,12 +12,15 @@ old-releases:
 
 <div id="home">
   <h1>Download</h1>
-  <p>You may download and use the releases as you wish. Be aware that the mod is under rapid development and features may change frequently.</p>
+  <p>It's recommended to always use the latest version possible. Only use the version matching your minecraft version. A file made for MC 1.7.2 will NOT work on 1.6.4 and vice versa.</p>
   <p>
 {% for jar in page.releases %}
     <a href="{{ jar[0] }}">{{ jar[1] }}</a>{% if jar[2] %} (<a href="{{ jar[2] }}">Mirror</a>){% endif %}<br />
-{% endfor %}<br />
-    <h2>Older versions:</h2>
+{% endfor %}
+  </p>
+  <p>
+    <h3>Older versions</h3>
+    <p>These versions are kept for some time for compability, but are not recommended to use any more.</p>
 {% for jar in page.old-releases %}
     <a href="{{ jar[0] }}">{{ jar[1] }}</a>{% if jar[2] %} (<a href="{{ jar[2] }}">Mirror</a>){% endif %}<br />
 {% endfor %}
