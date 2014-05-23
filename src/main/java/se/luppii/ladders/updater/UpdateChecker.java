@@ -16,7 +16,7 @@ public class UpdateChecker extends Thread {
 	
 	public UpdateChecker() {
 		
-		_versionUrl = "https://raw.github.com/CodeAG/" + References.MOD_ID + "/master/VERSION";
+		_versionUrl = "https://raw.githubusercontent.com/CodeAG/" + References.MOD_ID + "/master/VERSION";
 	}
 	
 	@Override
