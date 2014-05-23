@@ -2,7 +2,7 @@ Luppii's Ladders
 =============
 
 Official repository:
-https://github.com/Luppii/LLadders
+https://github.com/CodeAG/LLadders
 
 Official webpage:
 http://ladders.luppii.se
