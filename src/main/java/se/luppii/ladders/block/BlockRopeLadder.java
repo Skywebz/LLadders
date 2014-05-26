@@ -13,8 +13,10 @@ import se.luppii.ladders.tile.TileEntityRopeLadder;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -41,9 +43,46 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 		enableLeftClick = par1Boolean;
 	}
 	
+	public boolean isBlockNormalCube(World world, int i, int j, int k) {
+		return false;
+	}
+	
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4) {		
 		this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
-		return super.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
+		//Fix a collisionbox that is tiny bit bigger than the block the ladder is placed on. This to enable climbing from both sides
+		int direction = par1World.getBlockMetadata(par2, par3, par4) & 3;
+		float factor = 1.0F;
+	    float f = factor / 16.0F;
+	    float shrink = 0.125F;
+	    
+	    switch (direction) {
+	    case 0:
+	    	//SOUTH
+	    	AxisAlignedBB box = super.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
+	    	box = box.expand(0, 0, -f);
+	    	return box;
+	    	
+	    case 1:
+	    	//WEST
+	    	box = super.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
+	    	box = box.expand(-f, 0, 0);
+	    	return box;
+	    		    
+	    case 2:
+	    	//NORTH
+	    	box = super.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
+	    	box = box.expand(0, 0, -f);
+	    	return box;
+	    
+	    case 3:
+	    	//EAST
+	    	box = super.getCollisionBoundingBoxFromPool(par1World, par2, par3, par4);
+	    	box = box.expand(-f, 0, 0);
+	    	return box;
+	    }
+	    
+	    return AxisAlignedBB.getBoundingBox(par2 + f, par3, par4 + f, par2 + factor - f, par3 + factor - f, par4 + factor - f);
+	    
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -79,6 +118,71 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 		}
 	}
 	
+    @Override
+    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+    	//Check to see if it is a player as we are only interested in manipulating them
+    	if (entity instanceof EntityPlayer) {
+    		//Cast to EntityPlayer to make it more strict
+    		EntityPlayer player = (EntityPlayer) entity;
+    		
+    		int direction = world.getBlockMetadata(x, y, z) & 3;
+    		
+    		boolean player_close = false;
+    		
+    		//Look at placement position and calculate if the player is close enough to ladder to "climb"
+    		switch (direction) {
+    		//SOUTH
+    		case 0:
+    			if (player.posZ - z >= 0.8D)
+    				player_close = true;
+    			break;
+    			
+    		//WEST
+    		case 1:
+    			if (player.posX - x <= 0.2D)
+    				player_close = true;
+    			break;
+    			
+    		//NORTH
+    		case 2:
+    			if (player.posZ - z <= 0.2D)
+    				player_close = true;
+    			break;
+    			
+    		//EAST
+    		case 3:
+    			if (player.posX - x >= 0.8D)
+    				player_close = true;
+    			break;
+    		
+    		default:
+    			player_close = false;
+    		}
+    		
+    		if (player.posY - 1.0D >= y && player_close) {
+				player.moveForward = 0.0F;
+				
+				//If player is moving down, move slowly down.
+				if (player.motionY < -0.15D)
+					player.motionY = -0.15D;
+				
+				
+				//check if we want to climbe up
+				if (Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight)) {
+					if (player.motionY < 0.2D)
+						player.motionY = 0.2D;
+				}		
+    		}
+    		
+    		//Check if we are sneaking and want to climb up, or just want to sneak "stand still" on the ladder
+    		if (Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak) && (Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight))) {
+    			player.motionY = 0.2D;
+    		} else if (Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak)) {	
+    			player.setVelocity(0.0D, 0.08D, 0.0D); //Found this by experimenting. An upward velocity of 0.08 negates gravity fall
+    		}
+    	}
+    }
+    
 	public boolean isOpaqueCube() {
 		return false;
 	}
@@ -176,7 +280,7 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 			
 			flag = true;
 		}
-		if (par1World.isSideSolid(par2, par3 + 1, par4, SOUTH)) {
+		if (par1World.isSideSolid(par2, par3 + 1, par4, DOWN)) {
 			
 			flag = true;
 		}

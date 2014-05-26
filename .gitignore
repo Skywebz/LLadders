@@ -33,3 +33,4 @@ white-list.txt
 .classpath
 .project
 .settings/
+*.txt
