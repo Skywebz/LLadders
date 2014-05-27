@@ -1,5 +1,6 @@
 package se.luppii.ladders.block;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -12,6 +13,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -289,42 +291,56 @@ public class BlockLadderDispenser extends BlockContainer {
 		}
 		
 		if (te.getMode() == 1) {	// Place ladders.
-		
-			if (canSetLadder(world, x, y - 1, z, direction)) {
-				
-				ItemStack stack = extractLadderFromDispenser(te);
-				if (stack != null) {
-					
-					if (setLadder(world, stack, x, y - 1, z, direction)) {
+			for (int i = 0; i < te.getSizeInventory(); i++) {
+				ItemStack stack = te.getStackInSlot(i);
+				if (stack != null) { 
+					Block ladder = Block.getBlockFromItem(stack.getItem());
+					if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockSturdyLadder) {
+						int dir = 0; //direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong
+						boolean can_place = false; //flag to see if it is possible to put a ladder at the specifik place
 						
-						done = true;
-					}
-					else {
+						if (ladder == LLadders.blockRopeLadder) {
+							dir = -1;
+							
+						} else if (ladder == LLadders.blockSturdyLadder) {
+							dir = 1;
+						}
 						
-						te.setMode(2);
-						done = true;
+						can_place = this.canSetLadder(world, x, y + dir, z, direction);
+						if (can_place && dir != 0) { //we have a ladder, and can place it down or up
+							ItemStack ladderStack = this.extractLadderFromDispenser(te, i);
+							if (ladderStack != null) {
+								if (this.setLadder(world, ladderStack, x, y + dir, z, direction)) {
+									done = true;
+								} else {
+									done = true;
+									te.setMode(2);
+								}
+							} else {
+								te.setMode(2);
+								done = true;
+							}
+						} else {
+							te.setMode(2);
+							done = true;
+						}
 					}
 				}
-				else {
-				  
-					te.setMode(2);
-					done = true;
-				}
-			}
-			else {
+			} //end for
 				
-				te.setMode(2);
+		} else if (te.getMode() == 2) {	// Retract ladders.
+			boolean finished = true;
+			if (this.canRemoveLadder(world, x, y - 1, z, direction)) {
+				this.removeLadder(world, te, x, y - 1, z, direction);
 				done = true;
-			}
-		}
-		
-		else if (te.getMode() == 2) {	// Retract ladders.
-			
-			if (canRemoveLadder(world, x, y - 1, z, direction)) {
-				removeLadder(world, te, x, y - 1, z, direction);
+				finished = false;
+			} 
+			if (this.canRemoveLadder(world, x, y + 1, z, direction)) {
+				this.removeLadder(world, te, x, y + 1, z, direction);
 				done = true;
+				finished = false;
 			}
-			else {
+			if (finished) {
 				te.setMode(0);	// Cycle done. Reset mode.
 			}
 		}
@@ -334,24 +350,30 @@ public class BlockLadderDispenser extends BlockContainer {
 			te.setActiveState(false);
 		}
 		if (done) {
-			
 			world.scheduleBlockUpdate(x, y, z, this, te.getMode() == 1 ? 6 : 10);
 		}
 	}
 	
 	private boolean canRemoveLadder(World world, int x, int y, int z, int meta) {
 		
-		return world.getBlock(x, y, z) == LLadders.blockRopeLadder;
+		return world.getBlock(x, y, z) == LLadders.blockRopeLadder || world.getBlock(x, y, z) == LLadders.blockSturdyLadder;
 	}
 	
 	private boolean canSetLadder(World world, int x, int y, int z, int meta) {
+		Block ladder = world.getBlock(x, y, z);
 		
-		if (world.getBlock(x, y, z) == LLadders.blockRopeLadder) {	// We want to check if there is ladders below as well.
+		if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockSturdyLadder) {	// We want to check if there is ladders below as well.
+			int dir;
+			if (ladder == LLadders.blockRopeLadder)
+				dir = -1;
+			else if (ladder == LLadders.blockSturdyLadder)
+				dir = 1;
+			else
+				return false; //Safety measure, should never happen
 			
-			return canSetLadder(world, x, y - 1, z, meta);
+			return canSetLadder(world, x, y + dir, z, meta);
 		}
 		else if (!world.isAirBlock(x, y, z)) {
-			
 			return false;
 		}
 		return true;
@@ -376,19 +398,32 @@ public class BlockLadderDispenser extends BlockContainer {
 	}
 	
 	private boolean insertLadderToDispenser(TileEntityLadderDispenser te, ItemStack itemstack) {
-		
-		for (int i = 0; i < te.getSizeInventory(); i++) {
-			
-			if (te.getStackInSlot(i) == null) {
-				te.setInventorySlotContents(i, itemstack);
-				return true;
+		if (this.isItemStackInDispenser(itemstack, te)) {
+			for (int i = 0; i < te.getSizeInventory(); i++) {
+				if (te.getStackInSlot(i) != null && te.getStackInSlot(i).isItemEqual(itemstack) && te.isItemValidForSlot(i, itemstack) && te.getStackInSlot(i).stackSize < te.getInventoryStackLimit()) {
+					ItemStack stack = new ItemStack(itemstack.getItem(), te.getStackInSlot(i).stackSize + 1, itemstack.getItemDamage());
+					te.setInventorySlotContents(i, stack);
+					return true;
+				}
 			}
-			else if (te.isItemValidForSlot(i, itemstack) && te.getStackInSlot(i).stackSize < te.getInventoryStackLimit()) {
-				ItemStack stack = new ItemStack(itemstack.getItem(), te.getStackInSlot(i).stackSize + 1, itemstack.getItemDamage());
-				te.setInventorySlotContents(i, stack);
-				return true;
+		} else {
+			for (int i = 0; i < te.getSizeInventory(); i++) {
+				if (te.getStackInSlot(i) == null) {
+					te.setInventorySlotContents(i, itemstack);
+					return true;
+				}
 			}
 		}
+		return false;
+	}
+	
+	private boolean isItemStackInDispenser(ItemStack stack, TileEntityLadderDispenser te) {
+		for (int i = 0; i < te.getSizeInventory(); i++) {
+			ItemStack tempStack = te.getStackInSlot(i);
+			if (tempStack != null && tempStack.isItemEqual(stack))
+				return true;
+		}
+		
 		return false;
 	}
 	
@@ -396,7 +431,7 @@ public class BlockLadderDispenser extends BlockContainer {
 		
 		for (int i = te.getSizeInventory() - 1; i >= 0; i--) {
 			
-			if ((te.getStackInSlot(i) != null) && (te.getStackInSlot(i).isItemEqual(new ItemStack(LLadders.blockRopeLadder)))) {
+			if (te.getStackInSlot(i) != null && (te.getStackInSlot(i).isItemEqual(new ItemStack(LLadders.blockRopeLadder)) || te.getStackInSlot(i).isItemEqual(new ItemStack(LLadders.blockSturdyLadder)))) {
 				
 				return te.decrStackSize(i, 1);
 			}
@@ -404,16 +439,27 @@ public class BlockLadderDispenser extends BlockContainer {
 		return null;
 	}
 	
+	private ItemStack extractLadderFromDispenser(TileEntityLadderDispenser te, int slot) {
+		if ((te.getStackInSlot(slot) != null) && (te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockRopeLadder)) || te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockSturdyLadder)))) {
+			return te.decrStackSize(slot, 1);
+		} else {
+			return null;
+		}
+	}
+	
 	private void removeLadder(World world, TileEntityLadderDispenser te, int x, int y, int z, int meta) {
 		
 		Block block = world.getBlock(x, y, z);
 		int metadata = world.getBlockMetadata(x, y, z);
 
-		if (block != LLadders.blockRopeLadder) {
+		if (block != LLadders.blockRopeLadder && block != LLadders.blockSturdyLadder) {
 			return;
 		}
 		else if (world.getBlock(x, y - 1, z) == LLadders.blockRopeLadder) {	// We want to retract from bottom and up.
 			removeLadder(world, te, x, y - 1, z, meta);
+		} 
+		else if (world.getBlock(x,  y + 1, z) == LLadders.blockSturdyLadder) { // Or from the top down if sturdy ladders
+			removeLadder(world, te, x, y + 1, z, meta);
 		}
 		else {
 			world.setBlockToAir(x, y, z);
@@ -427,20 +473,21 @@ public class BlockLadderDispenser extends BlockContainer {
 	}
 	
 	private boolean setLadder(World world, ItemStack stack, int x, int y, int z, int meta) {
-		
-		Block block = world.getBlock(x, y, z);
-		
-		if (world.isAirBlock(x, y, z)) {
-			
-			if (stack != null) {
-				
-				world.setBlock(x, y, z, LLadders.blockRopeLadder, meta, 2);
+		if (stack != null) {
+			Block block = Block.getBlockFromItem(stack.getItem());
+	
+			if (world.isAirBlock(x, y, z) && world.getActualHeight() >= y) {	
+				world.setBlock(x, y, z, block, meta, 2);
 				return true;
+				
 			}
-		}
-		if (block == LLadders.blockRopeLadder) {
-			
-			return setLadder(world, stack, x, y - 1, z, meta);
+			if (block == LLadders.blockRopeLadder) {
+				return setLadder(world, stack, x, y - 1, z, meta);
+				
+			} else if (block == LLadders.blockSturdyLadder) {
+				return setLadder(world, stack, x, y + 1, z, meta);
+				
+			}
 		}
 		return false;
 	}
