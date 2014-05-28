@@ -155,7 +155,7 @@ public class BlockLadderDispenser extends BlockContainer {
 		
 		switch (par2) {
 			case 0:
-				if (par1 == 0) {
+				if (par1 == 0 || par1 == 1) {
 					
 					par1 = 2;
 				}
@@ -184,7 +184,7 @@ public class BlockLadderDispenser extends BlockContainer {
 		
 			case 0:
 				if (par3 > 1) {
-					if (par1 == 0) {
+					if (par1 == 0 || par1 == 1) {
 						
 						par1 = par3 - 2;
 					}
