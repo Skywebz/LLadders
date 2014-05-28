@@ -1,6 +1,5 @@
 package se.luppii.ladders.block;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -13,7 +12,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -270,7 +268,9 @@ public class BlockLadderDispenser extends BlockContainer {
 	
 	private void operate(World world, int x, int y, int z) {
 		
-		boolean done = false;
+		Block[] ladders = { LLadders.blockRopeLadder, LLadders.blockSturdyLadder};	// List of ladders to try placing.
+		boolean done = false,
+				finished = false;
 		
 		TileEntityLadderDispenser te = (TileEntityLadderDispenser)world.getTileEntity(x, y, z);
 		
@@ -281,6 +281,7 @@ public class BlockLadderDispenser extends BlockContainer {
 			
 			// If block is receiving redstone signal, start the engine.
 			te.setActiveState(true);
+			FMLLog.warning("[" + References.MOD_NAME + "] Starting machine.", new Object[0]);
 			
 			// Set running mode.
 			te.setMode(1);
@@ -291,50 +292,60 @@ public class BlockLadderDispenser extends BlockContainer {
 		}
 		
 		if (te.getMode() == 1) {	// Place ladders.
-			for (int i = 0; i < te.getSizeInventory(); i++) {
-				ItemStack stack = te.getStackInSlot(i);
-				if (stack != null) { 
-					Block ladder = Block.getBlockFromItem(stack.getItem());
-					if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockSturdyLadder) {
-						int dir = 0; //direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong
-						boolean can_place = false; //flag to see if it is possible to put a ladder at the specifik place
-						
-						if (ladder == LLadders.blockRopeLadder) {
-							dir = -1;
+			for (int l = 0; l < ladders.length; l++) {
+				for (int i = 0; i < te.getSizeInventory(); i++) {
+					ItemStack stack = te.getStackInSlot(i);
+					if (stack != null) { 
+						Block ladder = Block.getBlockFromItem(stack.getItem());
+						if (ladder == ladders[l]) {
+							int dir = 0;	// Direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong.
+							boolean can_place = false;	// Flag to see if it is possible to put a ladder at the specific place.
 							
-						} else if (ladder == LLadders.blockSturdyLadder) {
-							dir = 1;
-						}
-						
-						can_place = this.canSetLadder(world, x, y + dir, z, direction);
-						if (can_place && dir != 0) { //we have a ladder, and can place it down or up
-							ItemStack ladderStack = this.extractLadderFromDispenser(te, i);
-							if (ladderStack != null) {
-								if (this.setLadder(world, ladderStack, x, y + dir, z, direction)) {
-									done = true;
+							if (ladder == LLadders.blockRopeLadder) {
+								dir = -1;
+								
+							} else if (ladder == LLadders.blockSturdyLadder) {
+								dir = 1;
+							}
+							
+							can_place = this.canSetLadder(world, x, y + dir, z, direction);
+							if (can_place && dir != 0) {	// We have a ladder, and can place it down or up.
+								ItemStack ladderStack = this.extractLadderFromDispenser(te, i);
+								if (ladderStack != null) {
+									if (this.setLadder(world, ladderStack, x, y + dir, z, direction)) {
+										done = true;
+										finished = false;
+										break;
+									} else {
+										te.setMode(2);
+										finished = true;
+									}
 								} else {
-									done = true;
 									te.setMode(2);
-								}
+									finished = true;
+								}	
 							} else {
 								te.setMode(2);
-								done = true;
+								finished = true;
 							}
-						} else {
-							te.setMode(2);
-							done = true;
 						}
 					}
-				}
-			} //end for
+				} 	// end for
+			} 	// end for
+			if (!done) {
 				
+				te.setMode(2);
+				done = true;
+				finished = true;
+			}
+
 		} else if (te.getMode() == 2) {	// Retract ladders.
-			boolean finished = true;
+			finished = true;
 			if (this.canRemoveLadder(world, x, y - 1, z, direction)) {
 				this.removeLadder(world, te, x, y - 1, z, direction);
 				done = true;
 				finished = false;
-			} 
+			}
 			if (this.canRemoveLadder(world, x, y + 1, z, direction)) {
 				this.removeLadder(world, te, x, y + 1, z, direction);
 				done = true;
@@ -349,7 +360,8 @@ public class BlockLadderDispenser extends BlockContainer {
 			// Turn off machine.
 			te.setActiveState(false);
 		}
-		if (done) {
+		
+		if (done && !finished) {
 			world.scheduleBlockUpdate(x, y, z, this, te.getMode() == 1 ? 6 : 10);
 		}
 	}
@@ -420,23 +432,11 @@ public class BlockLadderDispenser extends BlockContainer {
 	private boolean isItemStackInDispenser(ItemStack stack, TileEntityLadderDispenser te) {
 		for (int i = 0; i < te.getSizeInventory(); i++) {
 			ItemStack tempStack = te.getStackInSlot(i);
-			if (tempStack != null && tempStack.isItemEqual(stack))
+			if (tempStack != null && tempStack.isItemEqual(stack) && tempStack.stackSize < te.getInventoryStackLimit())
 				return true;
 		}
 		
 		return false;
-	}
-	
-	private ItemStack extractLadderFromDispenser(TileEntityLadderDispenser te) {
-		
-		for (int i = te.getSizeInventory() - 1; i >= 0; i--) {
-			
-			if (te.getStackInSlot(i) != null && (te.getStackInSlot(i).isItemEqual(new ItemStack(LLadders.blockRopeLadder)) || te.getStackInSlot(i).isItemEqual(new ItemStack(LLadders.blockSturdyLadder)))) {
-				
-				return te.decrStackSize(i, 1);
-			}
-		}
-		return null;
 	}
 	
 	private ItemStack extractLadderFromDispenser(TileEntityLadderDispenser te, int slot) {

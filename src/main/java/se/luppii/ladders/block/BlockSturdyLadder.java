@@ -4,13 +4,11 @@ import static net.minecraftforge.common.util.ForgeDirection.*;
 
 import java.util.Random;
 
-import se.luppii.ladders.lib.References;
-import se.luppii.ladders.tile.TileEntityRopeLadder;
-import se.luppii.ladders.tile.TileEntitySturdyLadder;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.gameevent.InputEvent.KeyInputEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import se.luppii.ladders.lib.References;
+import se.luppii.ladders.tile.TileEntitySturdyLadder;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -368,7 +366,7 @@ public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
 		
-		return new TileEntityRopeLadder();
+		return new TileEntitySturdyLadder();
 	}
 	
 	private boolean canSetLadder(World world, int x, int y, int z, int meta) {

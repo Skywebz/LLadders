@@ -7,7 +7,6 @@ import java.util.Random;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import se.luppii.ladders.LLadders;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.tile.TileEntityRopeLadder;
 import net.minecraft.block.Block;
@@ -207,7 +206,7 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 				par1World.isSideSolid(par2, par3, par4 - 1, SOUTH) ||
 				par1World.isSideSolid(par2, par3, par4 + 1, NORTH) ||
 				par1World.isSideSolid(par2, par3 + 1, par4, DOWN) ||
-				par1World.getBlock(par2, par3 + 1, par4) == LLadders.blockRopeLadder;
+				par1World.getBlock(par2, par3 + 1, par4) == this;
 	}
 	
 	@Override
@@ -215,10 +214,10 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 		
 		int j1 = par9 & 3;
 		
-		if (par1World.getBlock(par2, par3 + 1, par4) == LLadders.blockRopeLadder) {
+		if (par1World.getBlock(par2, par3 + 1, par4) == this) {
 			return par1World.getBlockMetadata(par2, par3 + 1, par4);
 		}
-		if (par1World.getBlock(par2, par3 - 1, par4) == LLadders.blockRopeLadder) {
+		if (par1World.getBlock(par2, par3 - 1, par4) == this) {
 			return par1World.getBlockMetadata(par2, par3 - 1, par4);
 		}
 		if ((par5 == 1 || par5 == 2) && par1World.isSideSolid(par2, par3, par4 + 1, NORTH)) {
@@ -276,7 +275,7 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 		int metadata = par1World.getBlockMetadata(par2, par3, par4) & 3;
 		boolean flag = false;
 		
-		if (par1World.getBlock(par2, par3 + 1, par4) == LLadders.blockRopeLadder) {
+		if (par1World.getBlock(par2, par3 + 1, par4) == this) {
 			
 			flag = true;
 		}
