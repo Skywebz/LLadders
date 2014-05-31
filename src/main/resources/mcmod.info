@@ -6,7 +6,7 @@
         "credits": "",
         "version": "${version}",
         "mcversion": "${mcversion}",
-        "authorList": [ "Luppii" ],
-        "description": "Ladders!"
+        "authorList": [ "Luppii", "Aiqueneldar" ],
+        "description": "Ladders! Rope ladders hanging down. Sturdy ladders rising up. Dispensers shooting ladders up and down!"
     }
 ]
