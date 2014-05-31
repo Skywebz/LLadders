@@ -122,6 +122,7 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 	}
 	
     @Override
+    @SideOnly(Side.CLIENT)
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
     	//Check to see if it is a player as we are only interested in manipulating them
     	if (entity instanceof EntityPlayer) {
