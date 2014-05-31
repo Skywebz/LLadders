@@ -2,25 +2,19 @@
 layout: default
 title: Luppii's Ladders - Download
 base_url: "../"
-releases:
+mod_releases:
+ - ["http://minecraft.curseforge.com/mc-mods/78085-luppiis-ladders/files/2203218/download", "Ladders_0.3.0.jar (MC 1.7.2)", "../Releases/1.7.2/Ladders_0.3.0-MC1.7.2.jar"]
  - ["http://www.curseforge.com/media/files/787/454/Ladders_0.2.1-MC1.7.2.jar", "Ladders_0.2.1.jar (MC 1.7.2)", "../Releases/1.7.2/Ladders_0.2.1-MC1.7.2.jar"]
  - ["http://www.curseforge.com/media/files/787/453/Ladders_0.2.1-MC1.6.4.jar", "Ladders_0.2.1.jar (MC 1.6.4)", "../Releases/1.6.4/Ladders_0.2.1-MC1.6.4.jar"]
-old-releases:
  - ["http://www.curseforge.com/media/files/784/743/Ladders-0.2.0-MC1.7.2.jar", "Ladders_0.2.0.jar (MC 1.7.2)", "../Releases/1.7.2/Ladders_0.2.0-MC1.7.2.jar"]
  - ["http://www.curseforge.com/media/files/784/675/Ladders_0.1.0-MC1.6.4.jar", "Ladders_0.1.0.jar (MC 1.6.4)", "../Releases/1.6.4/Ladders_0.1.0-MC1.6.4.jar"]
 ---
 
 <div id="home">
   <h1>Download</h1>
-  <p>It's recommended to always use the latest version possible. Only use the version matching your minecraft version. A file made for MC 1.7.2 will NOT work on 1.6.4 and vice versa.</p>
+  <p>You may download and use the releases as you wish. Be aware that the mod is under rapid development and features may change frequently.</p>
   <p>
-{% for jar in page.releases %}
-    <a href="{{ jar[0] }}">{{ jar[1] }}</a>{% if jar[2] %} (<a href="{{ jar[2] }}">Mirror</a>){% endif %}<br />
-{% endfor %}
-  </p>
-  <h1>Older versions</h1>
-  <p>These versions are kept for some time for compability, but are not recommended to use any more.</p>
-{% for jar in page.old-releases %}
+{% for jar in page.mod_releases %}
     <a href="{{ jar[0] }}">{{ jar[1] }}</a>{% if jar[2] %} (<a href="{{ jar[2] }}">Mirror</a>){% endif %}<br />
 {% endfor %}
   </p>
