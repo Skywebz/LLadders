@@ -13,6 +13,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,7 +25,6 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.tile.TileEntitySturdyLadder;
 import cpw.mods.fml.common.FMLLog;
@@ -57,7 +57,6 @@ public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 		int direction = par1World.getBlockMetadata(par2, par3, par4) & 3;
 		float factor = 1.0F;
 	    float f = factor / 16.0F;
-	    float shrink = 0.185F;
 	    
 	    switch (direction) {
 	    case 0:
@@ -174,16 +173,16 @@ public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 				
 				
 				//check if we want to climbe up
-				if (Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight)) {
+				if (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight)) {
 					if (player.motionY < 0.2D)
 						player.motionY = 0.2D;
 				}		
     		}
     		
     		//Check if we are sneaking and want to climb up, or just want to sneak "stand still" on the ladder
-    		if (Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak) && (Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight))) {
+    		if (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak) && (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight))) {
     			player.motionY = 0.2D;
-    		} else if (Minecraft.getMinecraft().gameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak)) {	
+    		} else if (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak)) {	
     			player.setVelocity(0.0D, 0.08D, 0.0D); //Found this by experimenting. An upward velocity of 0.08 negates gravity fall
     		}
     	}
