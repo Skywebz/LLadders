@@ -4,12 +4,13 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import se.luppii.ladders.updater.UpdateManager;
 import se.luppii.ladders.block.BlockLadderDispenser;
 import se.luppii.ladders.block.BlockRopeLadder;
 import se.luppii.ladders.block.BlockSturdyLadder;
 import se.luppii.ladders.block.ItemBlockLadder;
+import se.luppii.ladders.event.LivingFallEventHandler;
 import se.luppii.ladders.gui.GuiHandler;
 import se.luppii.ladders.lib.Config;
 import se.luppii.ladders.lib.References;
@@ -17,16 +18,17 @@ import se.luppii.ladders.proxy.CommonProxy;
 import se.luppii.ladders.tile.TileEntityLadderDispenser;
 import se.luppii.ladders.tile.TileEntityRopeLadder;
 import se.luppii.ladders.tile.TileEntitySturdyLadder;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import se.luppii.ladders.updater.UpdateManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = References.MOD_ID, name = References.MOD_NAME, version = References.MOD_VERSION)
 public class LLadders {
@@ -74,6 +76,9 @@ public class LLadders {
 		 proxy.registerRenderers();
 		 
 		 registerEvent(new UpdateManager(), checkForUpdates);
+		 
+		 //Special eventhandler for falling players so climbing backsides of ladders won't cause fall damage
+		 MinecraftForge.EVENT_BUS.register(new LivingFallEventHandler());
 	}
 	
 	@EventHandler

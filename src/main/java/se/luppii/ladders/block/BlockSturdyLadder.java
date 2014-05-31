@@ -1,14 +1,13 @@
 package se.luppii.ladders.block;
 
-import static net.minecraftforge.common.util.ForgeDirection.*;
+import static net.minecraftforge.common.util.ForgeDirection.EAST;
+import static net.minecraftforge.common.util.ForgeDirection.NORTH;
+import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.util.ForgeDirection.UP;
+import static net.minecraftforge.common.util.ForgeDirection.WEST;
 
 import java.util.Random;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import se.luppii.ladders.lib.References;
-import se.luppii.ladders.tile.TileEntitySturdyLadder;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -25,6 +24,12 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
+import se.luppii.ladders.lib.References;
+import se.luppii.ladders.tile.TileEntitySturdyLadder;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 	
@@ -79,7 +84,7 @@ public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 	    	box = box.expand(-f, 0, 0);
 	    	return box;
 	    }
-	    
+	   
 	    return AxisAlignedBB.getBoundingBox(par2 + f, par3, par4 + f, par2 + factor - f, par3 + factor - f, par4 + factor - f);
 	    
 	}
@@ -162,8 +167,10 @@ public class BlockSturdyLadder extends Block implements ITileEntityProvider {
 				player.moveForward = 0.0F;
 				
 				//If player is moving down, move slowly down.
-				if (player.motionY < -0.15D)
-					player.motionY = -0.15D;
+				if (player.motionY < -0.1D) {
+					player.motionY = -0.1D;
+					
+				}
 				
 				
 				//check if we want to climbe up

@@ -1,14 +1,13 @@
 package se.luppii.ladders.block;
 
-import static net.minecraftforge.common.util.ForgeDirection.*;
+import static net.minecraftforge.common.util.ForgeDirection.DOWN;
+import static net.minecraftforge.common.util.ForgeDirection.EAST;
+import static net.minecraftforge.common.util.ForgeDirection.NORTH;
+import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.util.ForgeDirection.WEST;
 
 import java.util.Random;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import se.luppii.ladders.lib.References;
-import se.luppii.ladders.tile.TileEntityRopeLadder;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -25,6 +24,11 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import se.luppii.ladders.lib.References;
+import se.luppii.ladders.tile.TileEntityRopeLadder;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockRopeLadder extends Block implements ITileEntityProvider {
 

@@ -1,16 +1,17 @@
 package se.luppii.ladders.gui.client;
 
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import se.luppii.ladders.gui.container.ContainerLadderDispenser;
-import se.luppii.ladders.lib.References;
-import se.luppii.ladders.tile.TileEntityLadderDispenser;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
+
+import se.luppii.ladders.gui.container.ContainerLadderDispenser;
+import se.luppii.ladders.lib.References;
+import se.luppii.ladders.tile.TileEntityLadderDispenser;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiLadderDispenser extends GuiContainer {

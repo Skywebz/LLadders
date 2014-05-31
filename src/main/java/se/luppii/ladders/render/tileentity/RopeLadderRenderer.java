@@ -1,12 +1,13 @@
 package se.luppii.ladders.render.tileentity;
 
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.render.model.ModelRopeLadder;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 
 public class RopeLadderRenderer extends TileEntitySpecialRenderer {
 	
