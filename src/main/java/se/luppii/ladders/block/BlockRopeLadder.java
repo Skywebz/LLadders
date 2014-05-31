@@ -56,7 +56,6 @@ public class BlockRopeLadder extends Block implements ITileEntityProvider {
 		int direction = par1World.getBlockMetadata(par2, par3, par4) & 3;
 		float factor = 1.0F;
 	    float f = factor / 16.0F;
-	    float shrink = 0.125F;
 	    
 	    switch (direction) {
 	    case 0:

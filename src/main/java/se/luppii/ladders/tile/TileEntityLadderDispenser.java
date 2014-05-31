@@ -9,7 +9,6 @@ import net.minecraft.nbt.NBTTagList;
 public class TileEntityLadderDispenser extends TileEntityMachineBase implements ISidedInventory {
 
 	private ItemStack[] inventory;
-	@SuppressWarnings("unused")
 	private ItemStack inputItem;
 	private String name;
 	private boolean active;
