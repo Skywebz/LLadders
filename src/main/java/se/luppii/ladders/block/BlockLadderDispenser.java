@@ -520,11 +520,11 @@ public class BlockLadderDispenser extends BlockContainer {
 			return te;
 		}
 		catch (IllegalAccessException ex) {
-			FMLLog.severe(References.MOD_NAME, "Unable to create TileEntity instance from Transmorpher.");
+			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.", new Object[0]);
 			return null;
 		}
 		catch (InstantiationException ex) {
-			FMLLog.severe(References.MOD_NAME, "Unable to create TileEntity instance from Transmorpher.");
+			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.", new Object[0]);
 			return null;
 		}
 	}
