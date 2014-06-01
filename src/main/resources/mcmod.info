@@ -1,0 +1,12 @@
+[
+    {
+        "modid": "LLadders",
+        "name": "Luppii's Ladders",
+        "url": "http://ladders.luppii.se",
+        "credits": "Rubuet",
+        "version": "${version}",
+        "mcversion": "${mcversion}",
+        "authors": [ "Luppii", "Aiqueneldar" ],
+        "description": "Ladders! Rope ladders hanging down. Sturdy ladders rising up. Dispensers shooting ladders up and down!"
+    }
+]
