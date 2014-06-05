@@ -160,7 +160,7 @@ public class BlockLadderDispenser extends BlockContainer {
 				else {
 
 					par1 += 3;
-					if (par1 == 7) {
+					if (par1 == 6) {
 						
 						par1 = 5;
 					}
