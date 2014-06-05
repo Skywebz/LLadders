@@ -5,46 +5,28 @@ import static net.minecraftforge.common.util.ForgeDirection.EAST;
 import static net.minecraftforge.common.util.ForgeDirection.NORTH;
 import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
 import static net.minecraftforge.common.util.ForgeDirection.WEST;
-
-import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.tile.TileEntityRopeLadder;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockRopeLadder extends BlockGenericLadder implements ITileEntityProvider {
 
-	private IIcon blockIIcon;
-	private boolean enableLeftClick;
-	public static int renderID;
-	
 	public BlockRopeLadder(boolean par1Boolean) {
 		
 		super(Material.circuits);
 		this.setHardness(0.4F);
 		this.setStepSound(soundTypeLadder);
 		this.setBlockName("lladders.block.ropeladder");
-		this.setCreativeTab(CreativeTabs.tabDecorations);
-		enableLeftClick = par1Boolean;
+		this.enableLeftClick = par1Boolean;
 	}
 	
     public void updateLadderBounds(int par1) {

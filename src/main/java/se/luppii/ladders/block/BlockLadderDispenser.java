@@ -491,6 +491,7 @@ public class BlockLadderDispenser extends BlockContainer {
 		return false;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean isIndirectlyPowered(World par1World, int par2, int par3, int par4, int par5) {
 		
 		return par5 != 0 && par1World.getIndirectPowerOutput(par2, par3 - 1, par4, 0) ? true :

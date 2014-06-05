@@ -2,8 +2,6 @@ package se.luppii.ladders.block;
 
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -20,6 +18,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 /**
  * An abstract class collecting together all similarities for the concrete ladder classes. 
  * <p>
@@ -32,16 +32,21 @@ import net.minecraft.world.World;
 public abstract class BlockGenericLadder extends Block implements ITileEntityProvider {
 
 	private IIcon blockIIcon;
-	private boolean enableLeftClick;
+	protected boolean enableLeftClick;
 	public static int renderID;
 	
 	//Basic constructor
 	public BlockGenericLadder(boolean par1Boolean) {
+		
 		super(Material.circuits);
+		enableLeftClick = par1Boolean;
+		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 	
 	public BlockGenericLadder(Material par1Material) {
+		
 		super(par1Material);
+		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 	
 	/* Abstract methods go here */
@@ -59,7 +64,7 @@ public abstract class BlockGenericLadder extends Block implements ITileEntityPro
 	 * <p>
 	 * Checks if a block can be placed at specific coordinates
 	 * 
-	 * @param par1World The currenct minecraft world to work on
+	 * @param par1World The current minecraft world to work on
 	 * @param par2 X coordinate to test
 	 * @param par3 Y coordinate to test
 	 * @param par4 Z coordinate to test
