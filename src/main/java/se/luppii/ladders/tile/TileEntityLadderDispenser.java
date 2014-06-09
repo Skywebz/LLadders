@@ -9,7 +9,8 @@ import net.minecraft.nbt.NBTTagList;
 public class TileEntityLadderDispenser extends TileEntityMachineBase implements ISidedInventory {
 
 	private ItemStack[] inventory;
-	private ItemStack inputItem;
+	
+	//private ItemStack inputItem;	// Not used for now. Maybe later to filter valid itemstacks for the given slot.
 	private String name;
 	private boolean active;
 	private int mode;
