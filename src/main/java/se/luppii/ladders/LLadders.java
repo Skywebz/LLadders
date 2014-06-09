@@ -20,6 +20,7 @@ import se.luppii.ladders.tile.TileEntityRopeLadder;
 import se.luppii.ladders.tile.TileEntitySturdyLadder;
 import se.luppii.ladders.updater.UpdateManager;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -96,10 +97,11 @@ public class LLadders {
 	
 	private static void addRecipes() {
 		
-		// Rope Ladder
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockRopeLadder, 6, 0), true, new Object[] {
-			"V V", "PPP", "V V", 'P', "plankWood", 'V', Blocks.vine }));
-		
+		// Rope Ladder, Check for Ropes+, if it exists we will use that recepie instead
+		if (!Loader.isModLoaded("RopesPlus")) {
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockRopeLadder, 6, 0), true, new Object[] {
+				"V V", "PPP", "V V", 'P', "plankWood", 'V', Blocks.vine }));
+		}
 		// Sturdy Ladder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockSturdyLadder, 16, 0), true, new Object[] {
 			"I I", "IPI", "I I", 'P', "plankWood", 'I', Items.iron_ingot }));
