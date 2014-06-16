@@ -6,6 +6,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import se.luppii.ladders.LLadders;
+import se.luppii.ladders.lib.Config;
 import se.luppii.ladders.lib.References;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -36,16 +37,19 @@ public class RopesPlus {
 	@EventHandler
 	@Method(modid="RopesPlus")
 	public void load(FMLInitializationEvent e) {
-		//Try to use ropes as recipes for ladders
-		try {
-			// Rope Ladder
-			FMLLog.info("Ropes+ found, " + References.MOD_HELP_ROPES_NAME + " is loading...");
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(LLadders.blockRopeLadder, 6, 0), true, new Object[] {
-				"R R", "PPP", "R R", 'P', "plankWood", 'R', atomicstryker.ropesplus.common.RopesPlusCore.instance.blockRope}));
-			FMLLog.info("Done loading Ropes+ compat mod.");
-		} catch (Exception err) {
-			err.printStackTrace();
-		}
 		
+		if (Config.ropesPlusRecipe.getBoolean(true)) {
+			//Try to use ropes as recipes for ladders
+			try {
+				// Rope Ladder
+				FMLLog.info("Ropes+ found, " + References.MOD_HELP_ROPES_NAME + " is loading...");
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(LLadders.blockRopeLadder, 6, 0), true, new Object[] {
+					"R R", "PPP", "R R", 'P', "plankWood", 'R', atomicstryker.ropesplus.common.RopesPlusCore.instance.blockRope}));
+				FMLLog.info("Done loading Ropes+ compat mod.");
+			} catch (Exception err) {
+				FMLLog.warning("Ropes+ present, but unable to load recipe!");
+				FMLLog.warning(err.toString());
+			}
+		}
 	}
 }

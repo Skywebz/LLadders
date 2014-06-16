@@ -7,11 +7,15 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 public class Config {
 	
 	// General
-	public static Property checkForUpdates;
+	public static Property ropeLadderLeftClick;
 	public static Property sturdyLadderLeftClick;
 	
 	// Updater
-	public static Property ropeLadderLeftClick;
+	public static Property checkForUpdates;
+	
+	//Ropes+ config
+	public static Property ropesPlusRecipe;
+	public static Property overwriteVanillaRecipe;
 	
 	public static void loadConfig(FMLPreInitializationEvent e) {
 		
@@ -26,6 +30,10 @@ public class Config {
 			
 			// Update Checker
 			checkForUpdates = config.get("updater", "Check for updates", true);
+			
+			//Ropes+ config
+			ropesPlusRecipe = config.get("modCompat", "Use Ropes+ recipe", true);
+			overwriteVanillaRecipe = config.get("modCompat", "Overwrite vanilla recipe for RopeLadders", true);
 			
 			config.save();
 		}

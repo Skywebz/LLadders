@@ -97,8 +97,8 @@ public class LLadders {
 	
 	private static void addRecipes() {
 		
-		// Rope Ladder, Check for Ropes+, if it exists we will use that recepie instead
-		if (!Loader.isModLoaded("RopesPlus")) {
+		// Rope Laddder, check if RopesPlus is loaded. If so, check config if we should overwrite vanilla recipe
+		if ((!Loader.isModLoaded("RopesPlus")) ||(Loader.isModLoaded("RopesPlus") && !Config.overwriteVanillaRecipe.getBoolean(true)) || (Loader.isModLoaded("RopesPlus") && !Config.ropesPlusRecipe.getBoolean(true)) ) {
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockRopeLadder, 6, 0), true, new Object[] {
 				"V V", "PPP", "V V", 'P', "plankWood", 'V', Blocks.vine }));
 		}
