@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -24,6 +25,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import se.luppii.ladders.LLadders;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.tile.TileEntityLadderDispenser;
+import se.luppii.ladders.lib.Config;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -218,6 +220,18 @@ public class BlockLadderDispenser extends BlockContainer {
 		TileEntity te = par1World.getTileEntity(par2, par3, par4);
 		dropItems(te);
 		super.breakBlock(par1World, par2, par3, par4, par5Block, par6);
+	}
+	
+	@Override
+	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
+		if (Config.canClimbOnDispenser.getBoolean(true)) {
+			FMLLog.info("Climeable Dispensers activated");
+			return true;
+		} else {
+			FMLLog.info("Climable Dispenser deactivated");
+			return false;
+		}
+		
 	}
 	
 	private void dropItems(TileEntity te) {
@@ -491,7 +505,6 @@ public class BlockLadderDispenser extends BlockContainer {
 		return false;
 	}
 	
-	@SuppressWarnings("unused")
 	private boolean isIndirectlyPowered(World par1World, int par2, int par3, int par4, int par5) {
 		
 		return par5 != 0 && par1World.getIndirectPowerOutput(par2, par3 - 1, par4, 0) ? true :

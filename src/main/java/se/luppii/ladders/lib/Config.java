@@ -17,6 +17,9 @@ public class Config {
 	public static Property ropesPlusRecipe;
 	public static Property overwriteVanillaRecipe;
 	
+	//LadderDispenser config
+	public static Property canClimbOnDispenser;
+	
 	public static void loadConfig(FMLPreInitializationEvent e) {
 		
 		Configuration config = new Configuration(e.getSuggestedConfigurationFile());
@@ -34,6 +37,9 @@ public class Config {
 			//Ropes+ config
 			ropesPlusRecipe = config.get("modCompat", "Use Ropes+ recipe", true);
 			overwriteVanillaRecipe = config.get("modCompat", "Overwrite vanilla recipe for RopeLadders", true);
+			
+			//LadderDispenser config
+			canClimbOnDispenser = config.get("LadderDispenser", "Can Climb On LadderDispenser", false);
 			
 			config.save();
 		}
