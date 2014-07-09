@@ -12,7 +12,6 @@ build/
 config/
 crash-reports/
 eclipse/
-gradle/
 logs/
 mods/
 resourcepacks/
@@ -20,8 +19,6 @@ saves/
 world/
 banned-ips.txt
 banned-players.txt
-gradlew
-gradlew.bat
 ops.txt
 options.txt
 server.properties
