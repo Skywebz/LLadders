@@ -21,6 +21,9 @@ version = "0.3.0"
 group = "se.luppii.ladders" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Ladders"
 
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
 sourceSets {
     java {
         srcDirs = ["$projectDir/java"]
@@ -31,7 +34,7 @@ sourceSets {
 }
 
 minecraft {
-    version = "1.7.2-10.12.1.1060"
+    version = "1.7.2-10.12.2.1121"
     assetDir = "eclipse/assets"
 }
 
