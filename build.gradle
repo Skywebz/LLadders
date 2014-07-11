@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "0.3.0"
+version = "0.3.1dev"
 group = "se.luppii.ladders" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Ladders"
 
@@ -25,7 +25,7 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 dependencies {
-    files('RopesPlus-1.6.1.jar')
+    compile files("RopesPlus-1.6.1.jar")
 }
 
 sourceSets {
