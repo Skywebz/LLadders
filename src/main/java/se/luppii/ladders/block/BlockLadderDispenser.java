@@ -225,10 +225,10 @@ public class BlockLadderDispenser extends BlockContainer {
 	@Override
 	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
 		if (Config.canClimbOnDispenser.getBoolean(true)) {
-			FMLLog.info("Climeable Dispensers activated");
+			FMLLog.info("%s","Climeable Dispensers activated");
 			return true;
 		} else {
-			FMLLog.info("Climable Dispenser deactivated");
+			FMLLog.info("%s","Climable Dispenser deactivated");
 			return false;
 		}
 		
