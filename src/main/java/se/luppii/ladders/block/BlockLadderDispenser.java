@@ -7,8 +7,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -225,14 +229,76 @@ public class BlockLadderDispenser extends BlockContainer {
 	@Override
 	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
 		if (Config.canClimbOnDispenser.getBoolean(true)) {
-			FMLLog.info("%s","Climeable Dispensers activated");
+			FMLLog.info("Climeable Dispensers activated");
 			return true;
 		} else {
-			FMLLog.info("%s","Climable Dispenser deactivated");
+			FMLLog.info("Climable Dispenser deactivated");
 			return false;
 		}
 		
 	}
+	
+	/**
+	 * Gets collision bounds for a block from the pool
+	 * <p>
+	 * This gets the collision box to use for a block. This is not necessarily the same as the normal drawn bounding box that is the black wireframe around a block.
+	 * 
+	 * @see AxisAlignedBB
+	 * @param par1World The current minecraft world we operate on
+	 * @param par2 X coordinate in the world
+	 * @param par3 Y coordinate in the world
+	 * @param par4 Z coordinate in the world
+	 * @return A BoundingBox aligned to the axis of the world
+	 */
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int x, int y, int z) {		
+		double border = 0.0625D;
+	    return AxisAlignedBB.getBoundingBox(x + border, y, z + border, x + 1 - border, y + 1, z + 1 - border);
+	}
+	
+	@Override
+	public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4) {
+		this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F , 1.0F);
+	}
+	
+	@Override
+	public boolean getBlocksMovement(IBlockAccess par1IBlockAccess, int par2, int par3, int par4) {
+		return false;
+	}
+	
+	@Override
+    @SideOnly(Side.CLIENT)
+    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+    	//Check to see if it is a player as we are only interested in manipulating them
+    	if (entity instanceof EntityPlayer) {
+    		//Cast to EntityPlayer to make it more strict
+    		EntityPlayer player = (EntityPlayer) entity;
+    		
+    		//might not be needed more. Remove if works with this as constant true
+    		boolean player_close = true;
+    		    		
+    		if (player.posY - 1.0D >= y && player_close) {
+				player.moveForward = 0.0F;
+				
+				//If player is moving down, move slowly down.
+				if (player.motionY < -0.15D)
+					player.motionY = -0.15D;
+				
+				
+				//check if we want to climbe up
+				if (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight)) {
+					if (player.motionY < 0.2D)
+						player.motionY = 0.2D;
+				}		
+    		}
+    		
+    		//Check if we are sneaking and want to climb up, or just want to sneak "stand still" on the ladder
+    		if (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak) && (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight))) {
+    			player.motionY = 0.2D;
+    		} else if (GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak)) {	
+    			player.setVelocity(0.0D, 0.08D, 0.0D); //Found this by experimenting. An upward velocity of 0.08 negates gravity fall
+    		}
+    	}
+    }
 	
 	private void dropItems(TileEntity te) {
 		
