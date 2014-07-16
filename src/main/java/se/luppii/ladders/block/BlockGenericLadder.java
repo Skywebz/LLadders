@@ -201,8 +201,8 @@ public abstract class BlockGenericLadder extends Block implements ITileEntityPro
 		this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
 		//Fix a collisionbox that is tiny bit bigger than the block the ladder is placed on. This to enable climbing from both sides
 		int direction = par1World.getBlockMetadata(par2, par3, par4) & 3;
-		float factor = 1.0F;
-	    float f = factor / 16.0F;
+	    double f = 1.0D / 18.0D;
+	    float factor = 1.0F;
 	    
 	    switch (direction) {
 	    case 0:

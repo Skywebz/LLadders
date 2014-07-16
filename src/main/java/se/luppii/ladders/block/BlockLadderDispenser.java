@@ -245,24 +245,20 @@ public class BlockLadderDispenser extends BlockContainer {
 	 * 
 	 * @see AxisAlignedBB
 	 * @param par1World The current minecraft world we operate on
-	 * @param par2 X coordinate in the world
-	 * @param par3 Y coordinate in the world
-	 * @param par4 Z coordinate in the world
-	 * @return A BoundingBox aligned to the axis of the world
+	 * @param x X coordinate in the world
+	 * @param y Y coordinate in the world
+	 * @param z Z coordinate in the world
+	 * @return A BoundingBox aligned to the axis of the world (i.e. follows the grid of blocks)
 	 */
+	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int x, int y, int z) {		
-		double border = 0.0625D;
+		double border = 1.0D / 18.0D;
 	    return AxisAlignedBB.getBoundingBox(x + border, y, z + border, x + 1 - border, y + 1, z + 1 - border);
 	}
 	
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4) {
-		this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F , 1.0F);
-	}
-	
-	@Override
-	public boolean getBlocksMovement(IBlockAccess par1IBlockAccess, int par2, int par3, int par4) {
-		return false;
+	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
+		return AxisAlignedBB.getBoundingBox(i, j, k, i + 1, j + 1, k + 1);
 	}
 	
 	@Override
@@ -272,11 +268,8 @@ public class BlockLadderDispenser extends BlockContainer {
     	if (entity instanceof EntityPlayer) {
     		//Cast to EntityPlayer to make it more strict
     		EntityPlayer player = (EntityPlayer) entity;
-    		
-    		//might not be needed more. Remove if works with this as constant true
-    		boolean player_close = true;
     		    		
-    		if (player.posY - 1.0D >= y && player_close) {
+    		if (player.posY - 1.0D >= y) {
 				player.moveForward = 0.0F;
 				
 				//If player is moving down, move slowly down.
