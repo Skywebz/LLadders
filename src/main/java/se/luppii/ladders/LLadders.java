@@ -14,12 +14,14 @@ import se.luppii.ladders.event.LivingFallEventHandler;
 import se.luppii.ladders.gui.GuiHandler;
 import se.luppii.ladders.lib.Config;
 import se.luppii.ladders.lib.References;
+import se.luppii.ladders.modhelper.IExtension;
 import se.luppii.ladders.proxy.CommonProxy;
 import se.luppii.ladders.tile.TileEntityLadderDispenser;
 import se.luppii.ladders.tile.TileEntityRopeLadder;
 import se.luppii.ladders.tile.TileEntitySturdyLadder;
 import se.luppii.ladders.updater.UpdateManager;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -96,6 +98,16 @@ public class LLadders {
 	}
 	
 	private static void addRecipes() {
+		
+		//Check if Ropes+ is present. And if config says to use Ropes+ recipes
+		if (Loader.isModLoaded("RopesPlus") && Config.ropesPlusRecipe.getBoolean(true)) {
+			try {
+				Class.forName("se.luppii.ladders.modhelper.ropesplus.RopesPlus").asSubclass(IExtension.class).newInstance().load();
+			} catch (Exception err) {
+				FMLLog.warning("Could not load compatible class for Ropes+.");
+				FMLLog.warning(err.toString());
+			}
+		}
 		
 		// Rope Laddder, check if RopesPlus is loaded. If so, check config if we should overwrite vanilla recipe
 		if ((!Loader.isModLoaded("RopesPlus")) ||(Loader.isModLoaded("RopesPlus") && !Config.overwriteVanillaRecipe.getBoolean(true)) || (Loader.isModLoaded("RopesPlus") && !Config.ropesPlusRecipe.getBoolean(true)) ) {
