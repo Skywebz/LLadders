@@ -21,17 +21,9 @@ version = "0.3.1dev"
 group = "se.luppii.ladders" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Ladders"
 
-<<<<<<< HEAD
-sourceCompatibility = '1.7'
-targetCompatibility = '1.7'
-=======
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
 dependencies {
-    compile files("RopesPlus-1.6.1.jar")
+    compile files("libs/RopesPlus-1.7.10.jar")
 }
->>>>>>> origin/refactoring
 
 sourceSets {
     java {
@@ -43,7 +35,7 @@ sourceSets {
 }
 
 minecraft {
-    version = "1.7.2-10.12.2.1121"
+    version = "1.7.10-10.13.0.1199"
     assetDir = "eclipse/assets"
 }
 
