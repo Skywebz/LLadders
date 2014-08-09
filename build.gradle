@@ -21,10 +21,6 @@ version = "0.3.1dev"
 group = "se.luppii.ladders" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Ladders"
 
-dependencies {
-    compile files("libs/RopesPlus-1.7.10.jar")
-}
-
 sourceSets {
     java {
         srcDirs = ["$projectDir/java"]
