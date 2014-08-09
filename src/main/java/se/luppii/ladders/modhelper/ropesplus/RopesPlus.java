@@ -1,20 +1,13 @@
 package se.luppii.ladders.modhelper.ropesplus;
 
-import java.util.logging.Level;
-
-
-
-
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.registry.GameRegistry;
 import se.luppii.ladders.LLadders;
-import se.luppii.ladders.block.BlockRopeLadder;
 import se.luppii.ladders.lib.Config;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.modhelper.IExtension;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 
 public class RopesPlus implements IExtension {
