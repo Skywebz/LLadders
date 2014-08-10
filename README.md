@@ -20,3 +20,15 @@ Issues and feature requests, register them at https://github.com/CodeAG/LLadders
 5. Building a ready to use package:
  * `gradlew build` to build the .jar-file.
  * The compiled and obfuscated file will be located in 'LLadders/build/libs/'.
+
+### Run configurations in Eclipse
+* Client:
+  * Main class: `net.minecraft.launchwrapper.Launch`
+  * Program arguments: `--version 1.7 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --accessToken dev -username=Player --userProperties {} --assetIndex 1.7.10 --assetsDir ~/.gradle/caches/minecraft/assets`
+    * You might need to replace `--assetsDir ~/.gradle/caches/minecraft/assets` with an absolute path to that folder.
+  * VM arguments: `-Dfml.ignoreInvalidMinecraftCertificates=true`
+* Server:
+  * Main class: `cpw.mods.fml.relauncher.ServerLaunchWrapper`
+  * Starting the server:
+    1. Run server once, it will crash. Edit `eula=false ` inside 'eula.txt' to `eula=true`.
+    2. Run server again. Once loaded, stop it and edit `online-mode=false` inside 'server.properties' to `online-mode=true`
