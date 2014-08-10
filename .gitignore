@@ -18,13 +18,9 @@ mods/
 resourcepacks/
 saves/
 world/
-banned-ips.txt
-banned-players.txt
-ops.txt
-options.txt
+*.json
+*.txt
 server.properties
-servers.dat
-white-list.txt
 
 #################
 ## Eclipse
@@ -32,4 +28,3 @@ white-list.txt
 .classpath
 .project
 .settings/
-*.txt
