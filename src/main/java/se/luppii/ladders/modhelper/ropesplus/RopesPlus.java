@@ -16,15 +16,16 @@ public class RopesPlus implements IExtension {
 	public void load() {
 		if (Config.ropesPlusRecipe.getBoolean(true)) {
 			FMLLog.info("Configured to use Ropes+ recipe.");
+			
 			//Try to use ropes as recipes for ladders
 			try {
 				// Rope Ladder
-				FMLLog.info("Ropes+ found, " + References.MOD_HELP_ROPES_NAME + " is loading...");
+				FMLLog.info("[" + References.MOD_NAME + "] Ropes+ found, " + References.MOD_HELP_ROPES_NAME + " is loading.");
 				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(LLadders.blockRopeLadder, 6, 0), true, new Object[] {
 					"R R", "PPP", "R R", 'P', "plankWood", 'R', atomicstryker.ropesplus.common.RopesPlusCore.instance.blockRope}));
-				FMLLog.info("Done loading Ropes+ recipe.");
+				FMLLog.info("[" + References.MOD_HELP_ROPES_NAME + "] Loading complete.");
 			} catch (Exception err) {
-				FMLLog.warning("Ropes+ present, but unable to load recipe!");
+				FMLLog.warning("[" + References.MOD_HELP_ROPES_NAME + "] Ropes+ present, but unable to load recipe!");
 				FMLLog.warning(err.toString());
 			}
 		}

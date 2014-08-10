@@ -35,11 +35,11 @@ public class Config {
 			checkForUpdates = config.get("updater", "Check for updates", true);
 			
 			//Ropes+ config
-			ropesPlusRecipe = config.get("modCompat", "Use Ropes+ recipe", true);
-			overwriteVanillaRecipe = config.get("modCompat", "Overwrite vanilla recipe for RopeLadders", true);
+			ropesPlusRecipe = config.get("modcompat", "Use Ropes+ recipe", true);
+			overwriteVanillaRecipe = config.get("modcompat", "Overwrite vanilla recipe for RopeLadders", true);
 			
 			//LadderDispenser config
-			canClimbOnDispenser = config.get("LadderDispenser", "Can Climb On LadderDispenser", false);
+			canClimbOnDispenser = config.get("ladderdispenser", "Can climb on Ladder Dispenser", false);
 			
 			config.save();
 		}
