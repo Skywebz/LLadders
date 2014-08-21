@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import se.luppii.ladders.gui.client.GuiLadderDispenser;
-import se.luppii.ladders.gui.container.ContainerLadderDispenser;
+import se.luppii.ladders.inventory.ContainerLadderDispenser;
 import se.luppii.ladders.tile.TileEntityLadderDispenser;
 import cpw.mods.fml.common.network.IGuiHandler;
 

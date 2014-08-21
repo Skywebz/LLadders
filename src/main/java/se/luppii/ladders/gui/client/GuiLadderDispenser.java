@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import se.luppii.ladders.gui.container.ContainerLadderDispenser;
+import se.luppii.ladders.inventory.ContainerLadderDispenser;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.tile.TileEntityLadderDispenser;
 import cpw.mods.fml.relauncher.Side;

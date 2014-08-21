@@ -40,7 +40,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 	
 	@Override
 	public int getSizeInventory() {
-		return 9;
+		return 5;
 	}
 	
 	@Override
@@ -90,6 +90,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		
 		inventory[i] = itemstack;
 		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
+			
 			itemstack.stackSize = getInventoryStackLimit();
 		}
 		markDirty();
@@ -144,7 +145,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 	
 	@Override
 	public int[] getAccessibleSlotsFromSide(int var1) {
-		int[] slots = new int[getSizeInventory()];
+		int[] slots = new int[getSizeInventory() - 1];
 		return slots;
 	}
 	
@@ -186,7 +187,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 				}
 			}
 		}
-		markDirty();	
+		markDirty();
 	}
 	
 	@Override

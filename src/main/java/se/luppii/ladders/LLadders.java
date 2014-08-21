@@ -9,6 +9,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import se.luppii.ladders.block.BlockLadderDispenser;
 import se.luppii.ladders.block.BlockRopeLadder;
 import se.luppii.ladders.block.BlockSturdyLadder;
+import se.luppii.ladders.block.BlockVineLadder;
 import se.luppii.ladders.block.ItemBlockLadder;
 import se.luppii.ladders.event.LivingFallEventHandler;
 import se.luppii.ladders.gui.GuiHandler;
@@ -19,6 +20,7 @@ import se.luppii.ladders.proxy.CommonProxy;
 import se.luppii.ladders.tile.TileEntityLadderDispenser;
 import se.luppii.ladders.tile.TileEntityRopeLadder;
 import se.luppii.ladders.tile.TileEntitySturdyLadder;
+import se.luppii.ladders.tile.TileEntityVineLadder;
 import se.luppii.ladders.updater.UpdateManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -45,6 +47,7 @@ public class LLadders {
 	public static Block blockLadderDispenser;
 	public static Block blockRopeLadder;
 	public static Block blockSturdyLadder;
+	public static Block blockVineLadder;
 	public static boolean checkForUpdates;
 	
 	@EventHandler
@@ -56,6 +59,7 @@ public class LLadders {
 		blockLadderDispenser = new BlockLadderDispenser();
 		blockRopeLadder = new BlockRopeLadder(Config.ropeLadderLeftClick.getBoolean(true));
 		blockSturdyLadder = new BlockSturdyLadder(Config.sturdyLadderLeftClick.getBoolean(true));
+		blockVineLadder = new BlockVineLadder(Config.vineLadderLeftClick.getBoolean(true));
 		
 		checkForUpdates = Config.checkForUpdates.getBoolean(true);
 		
@@ -64,6 +68,9 @@ public class LLadders {
 		 
 		 GameRegistry.registerTileEntity(TileEntitySturdyLadder.class, "LSturdyLadder");
 		 GameRegistry.registerBlock(blockSturdyLadder, ItemBlockLadder.class, blockSturdyLadder.getUnlocalizedName());
+		 
+		 GameRegistry.registerTileEntity(TileEntityVineLadder.class, "LVineLadder");
+		 GameRegistry.registerBlock(blockVineLadder, ItemBlockLadder.class, blockVineLadder.getUnlocalizedName());
 		 
 		 GameRegistry.registerTileEntity(TileEntityLadderDispenser.class, "LadderDispenser");
 		 GameRegistry.registerBlock(blockLadderDispenser, blockLadderDispenser.getUnlocalizedName());

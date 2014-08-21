@@ -83,6 +83,16 @@ public class BlockLadderDispenser extends BlockContainer {
 		int meta = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 		
 		if (te instanceof TileEntityLadderDispenser) {
+			
+			// Special slot 4
+			ItemStack itemstack = ((TileEntityLadderDispenser)te).getStackInSlot(4);
+			if (itemstack != null) {
+				
+				Block block = Block.getBlockFromItem(itemstack.getItem());
+				if (block != null && block.renderAsNormalBlock())
+					return block.getIcon(par5, itemstack.getItemDamage());
+			}
+			
 			par5 = ((TileEntityLadderDispenser)te).getRotatedSide(par5);
 			
 			// Do stuff with this for bottom texture flip
@@ -340,7 +350,7 @@ public class BlockLadderDispenser extends BlockContainer {
 	
 	private void operate(World world, int x, int y, int z) {
 		
-		Block[] ladders = { LLadders.blockRopeLadder, LLadders.blockSturdyLadder};	// List of ladders to try placing.
+		Block[] ladders = { LLadders.blockRopeLadder, LLadders.blockSturdyLadder, LLadders.blockVineLadder };	// List of ladders to try placing.
 		boolean done = false,
 				finished = false;
 		
@@ -364,7 +374,7 @@ public class BlockLadderDispenser extends BlockContainer {
 		
 		if (te.getMode() == 1) {	// Place ladders.
 			for (int l = 0; l < ladders.length; l++) {
-				for (int i = 0; i < te.getSizeInventory(); i++) {
+				for (int i = 0; i < te.getSizeInventory() - 1; i++) {
 					ItemStack stack = te.getStackInSlot(i);
 					if (stack != null) { 
 						Block ladder = Block.getBlockFromItem(stack.getItem());
@@ -372,7 +382,7 @@ public class BlockLadderDispenser extends BlockContainer {
 							int dir = 0;	// Direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong.
 							boolean can_place = false;	// Flag to see if it is possible to put a ladder at the specific place.
 							
-							if (ladder == LLadders.blockRopeLadder) {
+							if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockVineLadder) {
 								dir = -1;
 								
 							} else if (ladder == LLadders.blockSturdyLadder) {
@@ -439,15 +449,16 @@ public class BlockLadderDispenser extends BlockContainer {
 	
 	private boolean canRemoveLadder(World world, int x, int y, int z, int meta) {
 		
-		return world.getBlock(x, y, z) == LLadders.blockRopeLadder || world.getBlock(x, y, z) == LLadders.blockSturdyLadder;
+		Block block = world.getBlock(x, y, z);
+		return block == LLadders.blockRopeLadder || block == LLadders.blockSturdyLadder || block == LLadders.blockVineLadder;
 	}
 	
 	private boolean canSetLadder(World world, int x, int y, int z, int meta) {
 		Block ladder = world.getBlock(x, y, z);
 		
-		if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockSturdyLadder) {	// We want to check if there is ladders below as well.
+		if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockSturdyLadder || ladder == LLadders.blockVineLadder) {	// We want to check if there is ladders below as well.
 			int dir;
-			if (ladder == LLadders.blockRopeLadder)
+			if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockVineLadder)
 				dir = -1;
 			else if (ladder == LLadders.blockSturdyLadder)
 				dir = 1;
@@ -482,7 +493,7 @@ public class BlockLadderDispenser extends BlockContainer {
 	
 	private boolean insertLadderToDispenser(TileEntityLadderDispenser te, ItemStack itemstack) {
 		if (this.isItemStackInDispenser(itemstack, te)) {
-			for (int i = 0; i < te.getSizeInventory(); i++) {
+			for (int i = 0; i < te.getSizeInventory() - 1; i++) {
 				if (te.getStackInSlot(i) != null && te.getStackInSlot(i).isItemEqual(itemstack) && te.isItemValidForSlot(i, itemstack) && te.getStackInSlot(i).stackSize < te.getInventoryStackLimit()) {
 					ItemStack stack = new ItemStack(itemstack.getItem(), te.getStackInSlot(i).stackSize + 1, itemstack.getItemDamage());
 					te.setInventorySlotContents(i, stack);
@@ -490,7 +501,7 @@ public class BlockLadderDispenser extends BlockContainer {
 				}
 			}
 		} else {
-			for (int i = 0; i < te.getSizeInventory(); i++) {
+			for (int i = 0; i < te.getSizeInventory() - 1; i++) {
 				if (te.getStackInSlot(i) == null) {
 					te.setInventorySlotContents(i, itemstack);
 					return true;
@@ -501,7 +512,7 @@ public class BlockLadderDispenser extends BlockContainer {
 	}
 	
 	private boolean isItemStackInDispenser(ItemStack stack, TileEntityLadderDispenser te) {
-		for (int i = 0; i < te.getSizeInventory(); i++) {
+		for (int i = 0; i < te.getSizeInventory() - 1; i++) {
 			ItemStack tempStack = te.getStackInSlot(i);
 			if (tempStack != null && tempStack.isItemEqual(stack) && tempStack.stackSize < te.getInventoryStackLimit())
 				return true;
@@ -511,7 +522,7 @@ public class BlockLadderDispenser extends BlockContainer {
 	}
 	
 	private ItemStack extractLadderFromDispenser(TileEntityLadderDispenser te, int slot) {
-		if ((te.getStackInSlot(slot) != null) && (te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockRopeLadder)) || te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockSturdyLadder)))) {
+		if ((te.getStackInSlot(slot) != null) && (te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockRopeLadder)) || te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockSturdyLadder)) || te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockVineLadder)))) {
 			return te.decrStackSize(slot, 1);
 		} else {
 			return null;
@@ -523,10 +534,10 @@ public class BlockLadderDispenser extends BlockContainer {
 		Block block = world.getBlock(x, y, z);
 		int metadata = world.getBlockMetadata(x, y, z);
 
-		if (block != LLadders.blockRopeLadder && block != LLadders.blockSturdyLadder) {
+		if (block != LLadders.blockRopeLadder && block != LLadders.blockSturdyLadder && block != LLadders.blockVineLadder) {
 			return;
 		}
-		else if (world.getBlock(x, y - 1, z) == LLadders.blockRopeLadder) {	// We want to retract from bottom and up.
+		else if (world.getBlock(x, y - 1, z) == LLadders.blockRopeLadder || world.getBlock(x, y - 1, z) == LLadders.blockVineLadder) {	// We want to retract from bottom and up.
 			removeLadder(world, te, x, y - 1, z, meta);
 		} 
 		else if (world.getBlock(x,  y + 1, z) == LLadders.blockSturdyLadder) { // Or from the top down if sturdy ladders
@@ -552,7 +563,7 @@ public class BlockLadderDispenser extends BlockContainer {
 				return true;
 				
 			}
-			if (block == LLadders.blockRopeLadder) {
+			if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) {
 				return setLadder(world, stack, x, y - 1, z, meta);
 				
 			} else if (block == LLadders.blockSturdyLadder) {

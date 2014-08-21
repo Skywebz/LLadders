@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
-public class ModelRopeLadder extends ModelBase {
+public class ModelVineLadder extends ModelBase {
 	
 	ModelRenderer LeftRope;
 	ModelRenderer RightRope;
@@ -12,9 +12,8 @@ public class ModelRopeLadder extends ModelBase {
 	ModelRenderer Step2;
 	ModelRenderer Step3;
 	ModelRenderer Step4;
-	ModelRenderer[] Knot = new ModelRenderer[16];
 	
-	public ModelRopeLadder() {
+	public ModelVineLadder() {
 		
 		textureWidth = 64;
 		textureHeight = 32;
@@ -35,81 +34,31 @@ public class ModelRopeLadder extends ModelBase {
 		
 		Step1 = new ModelRenderer(this, 4, 0);
 		Step1.addBox(0F, 0F, 0F, 14, 1, 2);
-		Step1.setRotationPoint(-7F, 10F, 6F);
+		Step1.setRotationPoint(-7F, 11F, 6F);
 		Step1.setTextureSize(64, 32);
 		Step1.mirror = true;
 		setRotation(Step1, 0F, 0F, 0F);
 		
 		Step2 = new ModelRenderer(this, 4, 3);
 		Step2.addBox(0F, 0F, 0F, 14, 1, 2);
-		Step2.setRotationPoint(-7F, 14F, 6F);
+		Step2.setRotationPoint(-7F, 15F, 6F);
 		Step2.setTextureSize(64, 32);
 		Step2.mirror = true;
 		setRotation(Step2, 0F, 0F, 0F);
 		
 		Step3 = new ModelRenderer(this, 4, 6);
 		Step3.addBox(0F, 0F, 0F, 14, 1, 2);
-		Step3.setRotationPoint(-7F, 18F, 6F);
+		Step3.setRotationPoint(-7F, 19F, 6F);
 		Step3.setTextureSize(64, 32);
 		Step3.mirror = true;
 		setRotation(Step3, 0F, 0F, 0F);
 		
 		Step4 = new ModelRenderer(this, 4, 9);
 		Step4.addBox(0F, 0F, 0F, 14, 1, 2);
-		Step4.setRotationPoint(-7F, 22F, 6F);
+		Step4.setRotationPoint(-7F, 23F, 6F);
 		Step4.setTextureSize(64, 32);
 		Step4.mirror = true;
 		setRotation(Step4, 0F, 0F, 0F);
-				
-		// This is the models for the knots, 2 models per knot.
-		float x = 0, y = 0, z = 0;
-		for (int i = 0; i < this.Knot.length; i++) {
-
-			if (i < 4) {
-				
-				Knot[i] = new ModelRenderer(this, 4, 12);
-				Knot[i].addBox(0F, 0F, 0F, 1, 1, 2);
-				x = -6F;
-				if (i == 0) y = 11F;
-				z = 6F;
-				Knot[i].setRotationPoint(x, y, z);
-				y += 4F;
-			}
-			else if (i < 8) {
-				
-				Knot[i] = new ModelRenderer(this, 10, 12);
-				Knot[i].addBox(0F, 0F, 0F, 2, 1, 1);
-				x = -6.5F;
-				if (i == 4) y = 11F;
-				z = 6.5F;
-				Knot[i].setRotationPoint(x, y, z);
-				y += 4F;
-			}
-			else if (i < 12) {
-				
-				Knot[i] = new ModelRenderer(this, 4, 12);
-				Knot[i].addBox(0F, 0F, 0F, 1, 1, 2);
-				x = 5F;
-				if (i == 8) y = 11F;
-				z = 6F;
-				Knot[i].setRotationPoint(x, y, z);
-				y += 4F;
-			}
-			else {
-				
-				Knot[i] = new ModelRenderer(this, 10, 12);
-				Knot[i].addBox(0F, 0F, 0F, 2, 1, 1);
-				x = 4.5F;
-				if (i == 12) y = 11F;
-				z = 6.5F;
-				Knot[i].setRotationPoint(x, y, z);
-				y += 4F;
-			}
-			
-			Knot[i].setTextureSize(64, 32);
-			Knot[i].mirror = true;
-			setRotation(Knot[i], 0F, 0F, 0F);
-		}
 	}
 	
 	public void renderLadder() {
@@ -120,9 +69,6 @@ public class ModelRopeLadder extends ModelBase {
 		Step2.render(0.0625F);
 		Step3.render(0.0625F);
 		Step4.render(0.0625F);
-		for (int i = 0; i < this.Knot.length; i++) {
-			Knot[i].render(0.0625F);
-		}
 	}
 	
 	private void setRotation(ModelRenderer model, float x, float y, float z) {

@@ -9,6 +9,7 @@ public class Config {
 	// General
 	public static Property ropeLadderLeftClick;
 	public static Property sturdyLadderLeftClick;
+	public static Property vineLadderLeftClick;
 	
 	// Updater
 	public static Property checkForUpdates;
@@ -28,8 +29,9 @@ public class Config {
 			config.load();
 			
 			// Block config.
-			sturdyLadderLeftClick = config.get(Configuration.CATEGORY_GENERAL, "Sturdy Ladder extend on left click", true);
 			ropeLadderLeftClick = config.get(Configuration.CATEGORY_GENERAL, "Rope Ladder extend on left click", true);
+			sturdyLadderLeftClick = config.get(Configuration.CATEGORY_GENERAL, "Sturdy Ladder extend on left click", true);
+			vineLadderLeftClick = config.get(Configuration.CATEGORY_GENERAL, "Vine Ladder extend on left click", true);
 			
 			// Update Checker
 			checkForUpdates = config.get("updater", "Check for updates", true);
