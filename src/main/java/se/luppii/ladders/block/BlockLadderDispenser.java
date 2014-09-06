@@ -370,19 +370,11 @@ public class BlockLadderDispenser extends BlockContainer {
 					if (stack != null) {
 						Block ladder = Block.getBlockFromItem(stack.getItem());
 						if (ladder == ladders[l]) {
-							int dir = 0; // Direction in Y-axis we want to use.
-											// 1 is up, -1 is down. 0 is no
-											// movement, which means something
-											// is wrong.
-							boolean can_place = false; // Flag to see if it is
-														// possible to put a
-														// ladder at the
-														// specific place.
+							int dir = 0; // Direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong.
+							boolean can_place = false; // Flag to see if it is possible to put a ladder at the specific place.
 							dir = this.getLadderDir(ladder);
 							can_place = this.canSetLadder(world, ladder, x, y + dir, z, direction);
-							if (can_place && dir != 0) { // We have a ladder,
-															// and can place it
-															// down or up.
+							if (can_place && dir != 0) { // We have a ladder, and can place it down or up.
 								ItemStack ladderStack = this.extractLadderFromDispenser(te, i);
 								if (ladderStack != null) {
 									if (this.setLadder(world, ladderStack, x, y + dir, z, direction)) {
@@ -459,8 +451,7 @@ public class BlockLadderDispenser extends BlockContainer {
 	private boolean canSetLadder(World world, Block ladder, int x, int y, int z, int meta) {
 
 		Block block = world.getBlock(x, y, z);
-		if (block == ladder) { // We want to check if there is ladders
-								// above/below as well.
+		if (block == ladder) { // We want to check if there is ladders above/below as well.
 			int dir;
 			if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder)
 				dir = -1;
@@ -552,24 +543,10 @@ public class BlockLadderDispenser extends BlockContainer {
 			return;
 		}
 		else if (world.getBlock(x, y - 1, z) == LLadders.blockRopeLadder
-				|| world.getBlock(x, y - 1, z) == LLadders.blockVineLadder) { // We
-																				// want
-																				// to
-																				// retract
-																				// from
-																				// bottom
-																				// and
-																				// up.
+				|| world.getBlock(x, y - 1, z) == LLadders.blockVineLadder) { // We want to retract from bottom and up.
 			removeLadder(world, te, x, y - 1, z, meta);
 		}
-		else if (world.getBlock(x, y + 1, z) == LLadders.blockSturdyLadder) { // Or
-																				// from
-																				// the
-																				// top
-																				// down
-																				// if
-																				// sturdy
-																				// ladders
+		else if (world.getBlock(x, y + 1, z) == LLadders.blockSturdyLadder) { // Or from the top down if sturdy ladders
 			removeLadder(world, te, x, y + 1, z, meta);
 		}
 		else {
