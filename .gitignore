@@ -21,6 +21,7 @@ world/
 *.json
 *.txt
 server.properties
+servers.dat
 
 #################
 ## Eclipse

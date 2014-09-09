@@ -109,12 +109,12 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 	@Override
 	public void updateEntity() {
 
-		if (working) {
+		if (working && !worldObj.isRemote) { // Important to not run code on clients, block placement will be bugged for clients otherwise.
 			ticks++;
 			if (getActiveState()) {
-				boolean worked = false;
+				boolean did_work = false;
 				if (mode == 1 || mode == 2) { // Place ladders. Mode 1 is up, mode 2 is down ladder placement.
-					if (ticks >= 6) {
+					if (ticks == 6) {
 						ticks = 0;
 						for (int i = 0; i < 2; i++) {
 							int direction = getForgeDirectionToInt(getFacingDirection());
@@ -128,9 +128,9 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 										boolean can_place = canSetLadder(ladder, xCoord, yCoord + dir, zCoord, direction); // Flag to see if it is possible to put a ladder at the specific place.
 										if (can_place && dir != 0) { // We have a ladder, and can place it down or up.
 											ItemStack ladderStack = extractLadderFromDispenser(slot);
-											if (ladderStack != null) {
+											if (ladderStack != null && ladderStack.stackSize > 0) {
 												if (setLadder(ladderStack, xCoord, yCoord + dir, zCoord, direction)) {
-													worked = true;
+													did_work = true;
 													break;
 												}
 											}
@@ -143,7 +143,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 					}
 				}
 				if (mode > 2) {
-					if (worked) { // If ladder placement is done but there's more work to do, reset to mode 1.
+					if (did_work) { // If ladder placement is done but there's more work to do, reset to mode 1.
 						ticks = 0;
 						mode = 1;
 					}
@@ -154,7 +154,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 				}
 			}
 			else { // Retract ladders.
-				if (ticks >= 10) {
+				if (ticks == 10) {
 					ticks = 0;
 					boolean finished = true;
 					if (canRemoveLadder(xCoord, yCoord - 1, zCoord)) {
@@ -170,6 +170,9 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 						working = false;
 					}
 				}
+			}
+			if (ticks > 10) {
+				ticks = 0;
 			}
 		}
 	}
@@ -234,7 +237,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 
 	private boolean setLadder(ItemStack stack, int x, int y, int z, int meta) {
 
-		if (stack != null) {
+		if (stack != null && stack.stackSize > 0 && !worldObj.isRemote) {
 			Block block = Block.getBlockFromItem(stack.getItem());
 			if (worldObj.isAirBlock(x, y, z) && worldObj.getActualHeight() >= y) {
 				worldObj.setBlock(x, y, z, block, meta, 2);
