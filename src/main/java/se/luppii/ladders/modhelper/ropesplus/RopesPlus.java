@@ -20,9 +20,8 @@ public class RopesPlus implements IExtension {
 			try {
 				// Rope Ladder
 				FMLLog.info("[" + References.MOD_NAME + "] Ropes+ found, " + References.MOD_HELP_ROPES_NAME + " is loading.");
-				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(LLadders.blockRopeLadder, 6, 0), true, new Object[] {
-						"R R", "PPP", "R R", 'P', "plankWood", 'R',
-						atomicstryker.ropesplus.common.RopesPlusCore.instance.blockRope }));
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(LLadders.blockRopeLadder, 4, 0), true, new Object[] { "R R", "PPP", "R R", 'P',
+						"plankWood", 'R', atomicstryker.ropesplus.common.RopesPlusCore.instance.blockRope }));
 				FMLLog.info("[" + References.MOD_HELP_ROPES_NAME + "] Loading complete.");
 			}
 			catch (Exception err) {

@@ -161,7 +161,6 @@ public class BlockLadderDispenser extends BlockContainer {
 				te.setMode(1); // Block is powered. Place ladders.
 				te.setActiveState(true);
 				te.setIsWorking(true);
-				FMLLog.info("[" + References.MOD_NAME + "] operating.");
 			}
 		}
 	}

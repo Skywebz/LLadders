@@ -19,7 +19,7 @@ public class Config {
 	// Ropes+ config
 	public static Property ropesPlusRecipe;
 
-	public static Property overwriteVanillaRecipe;
+	public static Property removeVanillaRopeRecipe;
 
 	// LadderDispenser config
 	public static Property canClimbOnDispenser;
@@ -36,10 +36,10 @@ public class Config {
 			// Update Checker
 			checkForUpdates = config.get("updater", "Check for updates", true);
 			// Ropes+ config
-			ropesPlusRecipe = config.get("modcompat", "Use Ropes+ recipe", true);
-			overwriteVanillaRecipe = config.get("modcompat", "Overwrite vanilla recipe for RopeLadders", true);
+			ropesPlusRecipe = config.get("modcompat", "Use Ropes+ recipe for Rope Ladder (if mod is loaded)", true);
+			removeVanillaRopeRecipe = config.get("modcompat", "Remove vanilla recipe for Rope Ladder", false);
 			// LadderDispenser config
-			canClimbOnDispenser = config.get("ladderdispenser", "Can climb on Ladder Dispenser", false);
+			canClimbOnDispenser = config.get("ladderdispenser", "Can climb on Ladder Dispenser", true);
 			config.save();
 		}
 		catch (Exception err) {

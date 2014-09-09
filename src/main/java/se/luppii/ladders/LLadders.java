@@ -105,16 +105,18 @@ public class LLadders {
 				Class.forName("se.luppii.ladders.modhelper.ropesplus.RopesPlus").asSubclass(IExtension.class).newInstance().load();
 			}
 			catch (Exception err) {
-				FMLLog.warning("Could not load compatible class for Ropes+.");
+				FMLLog.warning("[" + References.MOD_NAME + "] Could not load compatible class for Ropes+.");
 				FMLLog.warning(err.toString());
 			}
 		}
-		// Rope Laddder, check if RopesPlus is loaded. If so, check config if we should overwrite vanilla recipe.
-		if ((!Loader.isModLoaded("RopesPlus")) || (Loader.isModLoaded("RopesPlus") && !Config.overwriteVanillaRecipe.getBoolean(true))
-				|| (Loader.isModLoaded("RopesPlus") && !Config.ropesPlusRecipe.getBoolean(true))) {
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockRopeLadder, 6, 0), true, new Object[] { "V V", "PPP", "V V", 'P', "plankWood", 'V',
-					Blocks.vine }));
+		// If vanilla rope ladder recipe should be removed.
+		if (!Config.removeVanillaRopeRecipe.getBoolean(true)) {
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockRopeLadder, 4, 0), true, new Object[] { "S S", "PPP", "S S", 'P', "plankWood", 'S',
+				Items.string }));
 		}
+		// Vine Ladder
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockVineLadder, 6, 0), true, new Object[] { "V V", "PPP", "V V", 'P', "plankWood", 'V',
+				Blocks.vine }));
 		// Sturdy Ladder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockSturdyLadder, 16, 0), true, new Object[] { "I I", "IPI", "I I", 'P', "plankWood", 'I',
 				Items.iron_ingot }));
