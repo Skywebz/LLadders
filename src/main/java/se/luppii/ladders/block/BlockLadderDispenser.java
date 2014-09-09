@@ -1,7 +1,6 @@
 package se.luppii.ladders.block;
 
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -24,7 +23,6 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import se.luppii.ladders.LLadders;
 import se.luppii.ladders.lib.Config;
 import se.luppii.ladders.lib.References;
@@ -59,6 +57,16 @@ public class BlockLadderDispenser extends BlockContainer {
 	@Override
 	public int getLightValue(IBlockAccess par1IBlockAccess, int par2, int par3, int par4) {
 
+		TileEntity te = par1IBlockAccess.getTileEntity(par2, par3, par4);
+		if (te != null && te instanceof TileEntityLadderDispenser) {
+			// Special slot 4 - For custom texture
+			ItemStack itemstack = ((TileEntityLadderDispenser) te).getStackInSlot(4);
+			if (itemstack != null) {
+				Block block = Block.getBlockFromItem(itemstack.getItem());
+				if (block != null)
+					return block.getLightValue();
+			}
+		}
 		return 0;
 	}
 
@@ -85,7 +93,7 @@ public class BlockLadderDispenser extends BlockContainer {
 
 		TileEntity te = par1IBlockAccess.getTileEntity(par2, par3, par4);
 		int meta = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-		if (te instanceof TileEntityLadderDispenser) {
+		if (te != null && te instanceof TileEntityLadderDispenser) {
 			// Special slot 4 - For custom texture
 			ItemStack itemstack = ((TileEntityLadderDispenser) te).getStackInSlot(4);
 			if (itemstack != null) {
@@ -102,8 +110,7 @@ public class BlockLadderDispenser extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6,
-			float par7, float par8, float par9) {
+	public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9) {
 
 		par5EntityPlayer.openGui(LLadders.instance, 0, par1World, par2, par3, par4);
 		return true;
@@ -115,8 +122,7 @@ public class BlockLadderDispenser extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLivingBase par5EntityLivingBase,
-			ItemStack par6ItemStack) {
+	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLivingBase par5EntityLivingBase, ItemStack par6ItemStack) {
 
 		if (par5EntityLivingBase == null) {
 			return;
@@ -129,8 +135,8 @@ public class BlockLadderDispenser extends BlockContainer {
 			te.readFromNBT(par6ItemStack.getTagCompound());
 		}
 		if (te instanceof TileEntityLadderDispenser) {
-			int direction = MathHelper.floor_double((double) (par5EntityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-			switch (direction) {
+			//int direction = MathHelper.floor_double((double) (par5EntityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+			switch (MathHelper.floor_double((par5EntityLivingBase.rotationYaw * 4F) / 360F + 0.5D) & 3) {
 				case 0:
 					((TileEntityLadderDispenser) te).setFacingDirection(5);
 					break;
@@ -149,7 +155,15 @@ public class BlockLadderDispenser extends BlockContainer {
 
 	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, Block par5) {
 
-		par1World.scheduleBlockUpdate(par2, par3, par4, this, 10);
+		TileEntityLadderDispenser te = (TileEntityLadderDispenser) par1World.getTileEntity(par2, par3, par4);
+		if (par1World.isBlockIndirectlyGettingPowered(par2, par3, par4)) {
+			if (!te.getActiveState()) {
+				te.setMode(1); // Block is powered. Place ladders.
+				te.setActiveState(true);
+				te.setIsWorking(true);
+				FMLLog.info("[" + References.MOD_NAME + "] operating.");
+			}
+		}
 	}
 
 	public TileEntity getBlockEntity(int par1) {
@@ -181,8 +195,8 @@ public class BlockLadderDispenser extends BlockContainer {
 				}
 				return icons[par1];
 			default:
-				FMLLog.warning("[" + References.MOD_NAME + "] Invalid metadata for " + getUnlocalizedName()
-						+ ". Metadata received was " + par2 + ".", new Object[0]);
+				FMLLog.warning("[" + References.MOD_NAME + "] Invalid metadata for " + getUnlocalizedName() + ". Metadata received was " + par2 + ".",
+						new Object[0]);
 				return icons[0];
 		}
 	}
@@ -211,8 +225,8 @@ public class BlockLadderDispenser extends BlockContainer {
 					return getIcon(par1, par2);
 				}
 			default:
-				FMLLog.warning("[" + References.MOD_NAME + "] Invalid metadata for " + getUnlocalizedName()
-						+ ". Metadata received was " + par2 + ".", new Object[0]);
+				FMLLog.warning("[" + References.MOD_NAME + "] Invalid metadata for " + getUnlocalizedName() + ". Metadata received was " + par2 + ".",
+						new Object[0]);
 				return icons[0];
 		}
 	}
@@ -229,11 +243,9 @@ public class BlockLadderDispenser extends BlockContainer {
 	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
 
 		if (Config.canClimbOnDispenser.getBoolean(true)) {
-			FMLLog.info("Climeable Dispensers activated");
 			return true;
 		}
 		else {
-			FMLLog.info("Climable Dispenser deactivated");
 			return false;
 		}
 	}
@@ -275,7 +287,7 @@ public class BlockLadderDispenser extends BlockContainer {
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
 
 		// Check to see if it is a player as we are only interested in manipulating them
-		if (entity instanceof EntityPlayer) {
+		if (entity instanceof EntityPlayer && Config.canClimbOnDispenser.getBoolean(true)) {
 			// Cast to EntityPlayer to make it more strict
 			EntityPlayer player = (EntityPlayer) entity;
 			if (player.posY - 1.0D >= y) {
@@ -323,8 +335,8 @@ public class BlockLadderDispenser extends BlockContainer {
 					float xOffset = world.rand.nextFloat() * 0.8F + 0.1F;
 					float yOffset = world.rand.nextFloat() * 0.8F + 0.1F;
 					float zOffset = world.rand.nextFloat() * 0.8F + 0.1F;
-					EntityItem ei = new EntityItem(world, te.xCoord + xOffset, te.yCoord + yOffset, te.zCoord + zOffset,
-							new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
+					EntityItem ei = new EntityItem(world, te.xCoord + xOffset, te.yCoord + yOffset, te.zCoord + zOffset, new ItemStack(itemstack.getItem(), j,
+							itemstack.getItemDamage()));
 					float factor = 0.05F;
 					ei.motionX = (float) world.rand.nextGaussian() * factor;
 					ei.motionY = (float) world.rand.nextGaussian() * factor + 0.2F;
@@ -336,259 +348,6 @@ public class BlockLadderDispenser extends BlockContainer {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random) {
-
-		super.updateTick(par1World, par2, par3, par4, par5Random);
-		operate(par1World, par2, par3, par4);
-	}
-
-	private void operate(World world, int x, int y, int z) {
-
-		// List of ladders to try placing.
-		Block[] ladders = { LLadders.blockRopeLadder, LLadders.blockSturdyLadder, LLadders.blockVineLadder };
-		boolean done = false, finished = false;
-		TileEntityLadderDispenser te = (TileEntityLadderDispenser) world.getTileEntity(x, y, z);
-		// Since direction is saved inside the tile entity we have to fetch it
-		// and convert back to numbers.
-		int direction = getForgeDirectionToInt(te.getFacingDirection());
-		if (world.isBlockIndirectlyGettingPowered(x, y, z)) {
-			// If block is receiving redstone signal, start the engine.
-			te.setActiveState(true);
-			// Set running mode.
-			te.setMode(1);
-		}
-		if (!te.getActiveState()) {
-			return;
-		}
-		if (te.getMode() == 1) { // Place ladders.
-			for (int l = 0; l < ladders.length; l++) {
-				for (int i = 0; i < te.getSizeInventory() - 1; i++) {
-					ItemStack stack = te.getStackInSlot(i);
-					if (stack != null) {
-						Block ladder = Block.getBlockFromItem(stack.getItem());
-						if (ladder == ladders[l]) {
-							int dir = 0; // Direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong.
-							boolean can_place = false; // Flag to see if it is possible to put a ladder at the specific place.
-							dir = this.getLadderDir(ladder);
-							can_place = this.canSetLadder(world, ladder, x, y + dir, z, direction);
-							if (can_place && dir != 0) { // We have a ladder, and can place it down or up.
-								ItemStack ladderStack = this.extractLadderFromDispenser(te, i);
-								if (ladderStack != null) {
-									if (this.setLadder(world, ladderStack, x, y + dir, z, direction)) {
-										done = true;
-										finished = false;
-										break;
-									}
-									else {
-										te.setMode(2);
-										finished = true;
-									}
-								}
-								else {
-									te.setMode(2);
-									finished = true;
-								}
-							}
-							else {
-								te.setMode(2);
-								finished = true;
-							}
-						}
-					}
-				} // end for
-			} // end for
-			if (!done) {
-				te.setMode(2);
-				done = true;
-				finished = true;
-			}
-		}
-		else if (te.getMode() == 2) { // Retract ladders.
-			finished = true;
-			if (this.canRemoveLadder(world, x, y - 1, z, direction)) {
-				this.removeLadder(world, te, x, y - 1, z, direction);
-				done = true;
-				finished = false;
-			}
-			if (this.canRemoveLadder(world, x, y + 1, z, direction)) {
-				this.removeLadder(world, te, x, y + 1, z, direction);
-				done = true;
-				finished = false;
-			}
-			if (finished) {
-				te.setMode(0); // Cycle done. Reset mode.
-			}
-		}
-		else {
-			// Turn off machine.
-			te.setActiveState(false);
-		}
-		if (done && !finished) {
-			world.scheduleBlockUpdate(x, y, z, this, te.getMode() == 1 ? 6 : 10);
-		}
-	}
-
-	private int getLadderDir(Block ladder) {
-
-		if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockVineLadder) {
-			return -1;
-		}
-		else if (ladder == LLadders.blockSturdyLadder) {
-			return 1;
-		}
-		return 0;
-	}
-
-	private boolean canRemoveLadder(World world, int x, int y, int z, int meta) {
-
-		Block block = world.getBlock(x, y, z);
-		return block == LLadders.blockRopeLadder || block == LLadders.blockSturdyLadder || block == LLadders.blockVineLadder;
-	}
-
-	private boolean canSetLadder(World world, Block ladder, int x, int y, int z, int meta) {
-
-		Block block = world.getBlock(x, y, z);
-		if (block == ladder) { // We want to check if there is ladders above/below as well.
-			int dir;
-			if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder)
-				dir = -1;
-			else if (block == LLadders.blockSturdyLadder)
-				dir = 1;
-			else
-				return false; // Safety measure, should never happen
-			return canSetLadder(world, ladder, x, y + dir, z, meta);
-		}
-		else if (!world.isAirBlock(x, y, z)) {
-			return false;
-		}
-		return true;
-	}
-
-	private int getForgeDirectionToInt(ForgeDirection dir) {
-
-		ForgeDirection[] directions = { ForgeDirection.DOWN, ForgeDirection.UP, ForgeDirection.NORTH, ForgeDirection.SOUTH,
-				ForgeDirection.WEST, ForgeDirection.EAST };
-		for (int i = 0; i < directions.length; i++) {
-			if (directions[i] == dir) {
-				switch (i) {
-					case 2:
-						return 3;
-					case 3:
-						return 1;
-					case 4:
-						return 2;
-					case 5:
-						return 0;
-				}
-			}
-		}
-		return 0;
-	}
-
-	private boolean insertLadderToDispenser(TileEntityLadderDispenser te, ItemStack itemstack) {
-
-		if (this.isItemStackInDispenser(itemstack, te)) {
-			for (int i = 0; i < te.getSizeInventory() - 1; i++) {
-				if (te.getStackInSlot(i) != null && te.getStackInSlot(i).isItemEqual(itemstack)
-						&& te.isItemValidForSlot(i, itemstack) && te.getStackInSlot(i).stackSize < te.getInventoryStackLimit()) {
-					ItemStack stack = new ItemStack(itemstack.getItem(), te.getStackInSlot(i).stackSize + 1,
-							itemstack.getItemDamage());
-					te.setInventorySlotContents(i, stack);
-					return true;
-				}
-			}
-		}
-		else {
-			for (int i = 0; i < te.getSizeInventory() - 1; i++) {
-				if (te.getStackInSlot(i) == null) {
-					te.setInventorySlotContents(i, itemstack);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private boolean isItemStackInDispenser(ItemStack stack, TileEntityLadderDispenser te) {
-
-		for (int i = 0; i < te.getSizeInventory() - 1; i++) {
-			ItemStack tempStack = te.getStackInSlot(i);
-			if (tempStack != null && tempStack.isItemEqual(stack) && tempStack.stackSize < te.getInventoryStackLimit())
-				return true;
-		}
-		return false;
-	}
-
-	private ItemStack extractLadderFromDispenser(TileEntityLadderDispenser te, int slot) {
-
-		if ((te.getStackInSlot(slot) != null)
-				&& (te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockRopeLadder))
-						|| te.getStackInSlot(slot).isItemEqual(new ItemStack(LLadders.blockSturdyLadder)) || te.getStackInSlot(
-						slot).isItemEqual(new ItemStack(LLadders.blockVineLadder)))) {
-			return te.decrStackSize(slot, 1);
-		}
-		else {
-			return null;
-		}
-	}
-
-	private void removeLadder(World world, TileEntityLadderDispenser te, int x, int y, int z, int meta) {
-
-		Block block = world.getBlock(x, y, z);
-		int metadata = world.getBlockMetadata(x, y, z);
-		if (block != LLadders.blockRopeLadder && block != LLadders.blockSturdyLadder && block != LLadders.blockVineLadder) {
-			return;
-		}
-		else if (world.getBlock(x, y - 1, z) == LLadders.blockRopeLadder
-				|| world.getBlock(x, y - 1, z) == LLadders.blockVineLadder) { // We want to retract from bottom and up.
-			removeLadder(world, te, x, y - 1, z, meta);
-		}
-		else if (world.getBlock(x, y + 1, z) == LLadders.blockSturdyLadder) { // Or from the top down if sturdy ladders
-			removeLadder(world, te, x, y + 1, z, meta);
-		}
-		else {
-			world.setBlockToAir(x, y, z);
-			world.removeTileEntity(x, y, z);
-			ItemStack itemstack = new ItemStack(block, 1, metadata & 12);
-			if (!insertLadderToDispenser(te, itemstack)) {
-				dropBlockAsItem(world, x, y, z, itemstack);
-			}
-		}
-	}
-
-	private boolean setLadder(World world, ItemStack stack, int x, int y, int z, int meta) {
-
-		if (stack != null) {
-			Block block = Block.getBlockFromItem(stack.getItem());
-			if (world.isAirBlock(x, y, z) && world.getActualHeight() >= y) {
-				world.setBlock(x, y, z, block, meta, 2);
-				return true;
-			}
-			if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) {
-				return setLadder(world, stack, x, y - 1, z, meta);
-			}
-			else if (block == LLadders.blockSturdyLadder) {
-				return setLadder(world, stack, x, y + 1, z, meta);
-			}
-		}
-		return false;
-	}
-
-	private boolean isIndirectlyPowered(World par1World, int par2, int par3, int par4, int par5) {
-
-		return par5 != 0 && par1World.getIndirectPowerOutput(par2, par3 - 1, par4, 0) ? true : (par5 != 1
-				&& par1World.getIndirectPowerOutput(par2, par3 + 1, par4, 1) ? true : (par5 != 2
-				&& par1World.getIndirectPowerOutput(par2, par3, par4 - 1, 2) ? true : (par5 != 3
-				&& par1World.getIndirectPowerOutput(par2, par3, par4 + 1, 3) ? true : (par5 != 5
-				&& par1World.getIndirectPowerOutput(par2 + 1, par3, par4, 5) ? true : (par5 != 4
-				&& par1World.getIndirectPowerOutput(par2 - 1, par3, par4, 4) ? true : (par1World.getIndirectPowerOutput(par2,
-				par3, par4, 0) ? true : (par1World.getIndirectPowerOutput(par2, par3 + 2, par4, 1) ? true : (par1World
-				.getIndirectPowerOutput(par2, par3 + 1, par4 - 1, 2) ? true : (par1World.getIndirectPowerOutput(par2, par3 + 1,
-				par4 + 1, 3) ? true : (par1World.getIndirectPowerOutput(par2 - 1, par3 + 1, par4, 4) ? true : par1World
-				.getIndirectPowerOutput(par2 + 1, par3 + 1, par4, 5)))))))))));
 	}
 
 	@Override
@@ -605,13 +364,11 @@ public class BlockLadderDispenser extends BlockContainer {
 			return te;
 		}
 		catch (IllegalAccessException ex) {
-			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.",
-					new Object[0]);
+			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.", new Object[0]);
 			return null;
 		}
 		catch (InstantiationException ex) {
-			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.",
-					new Object[0]);
+			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.", new Object[0]);
 			return null;
 		}
 	}

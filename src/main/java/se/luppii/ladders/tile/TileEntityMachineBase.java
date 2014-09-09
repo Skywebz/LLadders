@@ -14,6 +14,8 @@ public class TileEntityMachineBase extends TileEntity {
 
 	private ForgeDirection facingDirection;
 
+	private boolean active = false;
+
 	private static final int[][] texturePattern = new int[][] { { 0, 1, 2, 3, 4, 5 }, // D
 			{ 0, 1, 2, 3, 4, 5 }, // U
 			{ 0, 1, 2, 3, 4, 5 }, // N
@@ -25,6 +27,27 @@ public class TileEntityMachineBase extends TileEntity {
 	public ForgeDirection getFacingDirection() {
 
 		return facingDirection != null ? facingDirection : ForgeDirection.NORTH;
+	}
+
+	public int getForgeDirectionToInt(ForgeDirection dir) {
+
+		ForgeDirection[] directions = { ForgeDirection.DOWN, ForgeDirection.UP, ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.WEST,
+				ForgeDirection.EAST };
+		for (int i = 0; i < directions.length; i++) {
+			if (directions[i] == dir) {
+				switch (i) {
+					case 2:
+						return 3;
+					case 3:
+						return 1;
+					case 4:
+						return 2;
+					case 5:
+						return 0;
+				}
+			}
+		}
+		return 0;
 	}
 
 	public int getRotatedSide(int side) {
@@ -42,11 +65,25 @@ public class TileEntityMachineBase extends TileEntity {
 		}
 	}
 
+	public boolean getActiveState() {
+
+		return active;
+	}
+
+	public void setActiveState(boolean isActive) {
+
+		if (active != isActive && worldObj != null && !worldObj.isRemote) {
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
+		active = isActive;
+	}
+
 	@Override
 	public Packet getDescriptionPacket() {
 
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("facing", this.getFacingDirection().ordinal());
+		//nbt.setInteger("facing", this.getFacingDirection().ordinal());
+		writeToNBT(nbt);
 		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, nbt);
 	}
 
@@ -61,8 +98,8 @@ public class TileEntityMachineBase extends TileEntity {
 	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
 
 		super.readFromNBT(par1NBTTagCompound);
-		int facing = par1NBTTagCompound.getInteger("facing");
-		setFacingDirection(facing);
+		setFacingDirection(par1NBTTagCompound.getInteger("facing"));
+		setActiveState(par1NBTTagCompound.getBoolean("active"));
 	}
 
 	@Override
@@ -70,6 +107,7 @@ public class TileEntityMachineBase extends TileEntity {
 
 		super.writeToNBT(par1NBTTagCompound);
 		par1NBTTagCompound.setInteger("facing", getFacingDirection().ordinal());
+		par1NBTTagCompound.setBoolean("active", active);
 	}
 
 	@SideOnly(Side.CLIENT)

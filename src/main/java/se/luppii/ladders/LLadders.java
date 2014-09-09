@@ -81,7 +81,7 @@ public class LLadders {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		proxy.registerRenderers();
 		registerEvent(new UpdateManager(), checkForUpdates);
-		// Special eventhandler for falling players so climbing backsides of ladders won't cause fall damage
+		// Special handler for falling players so climbing back of ladders won't cause fall damage.
 		MinecraftForge.EVENT_BUS.register(new LivingFallEventHandler());
 	}
 
@@ -99,7 +99,7 @@ public class LLadders {
 
 	private static void addRecipes() {
 
-		// Check if Ropes+ is present. And if config says to use Ropes+ recipes
+		// Check if Ropes+ is present. And if config says to use Ropes+ recipes.
 		if (Loader.isModLoaded("RopesPlus") && Config.ropesPlusRecipe.getBoolean(true)) {
 			try {
 				Class.forName("se.luppii.ladders.modhelper.ropesplus.RopesPlus").asSubclass(IExtension.class).newInstance().load();
@@ -109,7 +109,7 @@ public class LLadders {
 				FMLLog.warning(err.toString());
 			}
 		}
-		// Rope Laddder, check if RopesPlus is loaded. If so, check config if we  should overwrite vanilla recipe
+		// Rope Laddder, check if RopesPlus is loaded. If so, check config if we should overwrite vanilla recipe.
 		if ((!Loader.isModLoaded("RopesPlus")) || (Loader.isModLoaded("RopesPlus") && !Config.overwriteVanillaRecipe.getBoolean(true))
 				|| (Loader.isModLoaded("RopesPlus") && !Config.ropesPlusRecipe.getBoolean(true))) {
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockRopeLadder, 6, 0), true, new Object[] { "V V", "PPP", "V V", 'P', "plankWood", 'V',

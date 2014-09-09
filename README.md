@@ -31,4 +31,4 @@ Issues and feature requests, register them at https://github.com/CodeAG/LLadders
   * Main class: `cpw.mods.fml.relauncher.ServerLaunchWrapper`
   * Starting the server:
     1. Run server once, it will crash. Edit `eula=false ` inside 'eula.txt' to `eula=true`.
-    2. Run server again. Once loaded, stop it and edit `online-mode=false` inside 'server.properties' to `online-mode=true`
+    2. Run server again. Once loaded, stop it and edit `online-mode=true` inside 'server.properties' to `online-mode=false`
