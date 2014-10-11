@@ -120,8 +120,16 @@ public class LLadders {
 		// Sturdy Ladder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockSturdyLadder, 16, 0), true, new Object[] { "I I", "IPI", "I I", 'P', "plankWood", 'I',
 				Items.iron_ingot }));
-		// Ladder Dispenser
+		// Ladder Dispenser - One recipe for each type of ladder.
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "III", "IRI", "ILI", 'I', Items.iron_ingot,
 				'R', Items.redstone, 'L', blockRopeLadder }));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "III", "IRI", "ILI", 'I', Items.iron_ingot,
+			'R', Items.redstone, 'L', blockVineLadder }));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "ILI", "IRI", "III", 'I', Items.iron_ingot,
+			'R', Items.redstone, 'L', blockSturdyLadder }));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "ISI", "IRI", "ILI", 'I', Items.iron_ingot,
+			'R', Items.redstone, 'S', blockSturdyLadder, 'L', blockRopeLadder }));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "ISI", "IRI", "ILI", 'I', Items.iron_ingot,
+			'R', Items.redstone, 'S', blockSturdyLadder, 'L', blockVineLadder }));
 	}
 }
