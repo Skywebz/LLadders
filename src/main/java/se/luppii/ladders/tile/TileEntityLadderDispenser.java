@@ -196,6 +196,8 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 
 	private boolean canSetLadder(Block ladder, int x, int y, int z, int direction) {
 
+		if (y >= worldObj.getHeight() - 1 || y < 0)
+			return false; // Make sure that we're not trying to place ladders out of the world.
 		Block block = worldObj.getBlock(x, y, z);
 		if (block == ladder) {
 			int dir;
