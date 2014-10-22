@@ -11,8 +11,7 @@ import se.luppii.ladders.render.model.ModelRopeLadder;
 
 public class RopeLadderRenderer extends TileEntitySpecialRenderer {
 
-	public static final ResourceLocation ropeLadderTexture = new ResourceLocation(References.MOD_ID.toLowerCase(),
-			"textures/models/ropeladder.png");
+	public static final ResourceLocation ropeLadderTexture = new ResourceLocation(References.MOD_ID.toLowerCase(), "textures/models/ropeladder.png");
 
 	private ModelRopeLadder modelRopeLadder = new ModelRopeLadder();
 

@@ -81,8 +81,7 @@ public class BlockSturdyLadder extends BlockGenericLadder implements ITileEntity
 	}
 
 	@Override
-	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLivingBase par5EntityLivingBase,
-			ItemStack par6ItemStack) {
+	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLivingBase par5EntityLivingBase, ItemStack par6ItemStack) {
 
 		if (par5EntityLivingBase == null) {
 			return;
@@ -102,8 +101,7 @@ public class BlockSturdyLadder extends BlockGenericLadder implements ITileEntity
 	public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer) {
 
 		if (enableLeftClick) {
-			if (par5EntityPlayer.getCurrentEquippedItem() != null
-					&& par5EntityPlayer.getCurrentEquippedItem().isItemEqual(new ItemStack(this))) {
+			if (par5EntityPlayer.getCurrentEquippedItem() != null && par5EntityPlayer.getCurrentEquippedItem().isItemEqual(new ItemStack(this))) {
 				int meta = par1World.getBlockMetadata(par2, par3, par4) & 3;
 				if (canSetLadder(par1World, par2, par3 + 1, par4, meta)) {
 					setLadder(par1World, par2, par3 + 1, par4, meta, par5EntityPlayer);

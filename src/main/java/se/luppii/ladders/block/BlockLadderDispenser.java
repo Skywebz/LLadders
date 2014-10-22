@@ -44,7 +44,7 @@ public class BlockLadderDispenser extends BlockContainer {
 		this.setResistance(5.0F);
 		this.setStepSound(soundTypeMetal);
 		this.setBlockName("lladders.block.ladderdispenser");
-		this.icons = new IIcon[names.length]; // Get new icons for the new sides
+		this.icons = new IIcon[names.length];
 		this.setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
@@ -363,11 +363,11 @@ public class BlockLadderDispenser extends BlockContainer {
 			return te;
 		}
 		catch (IllegalAccessException ex) {
-			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.", new Object[0]);
+			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.");
 			return null;
 		}
 		catch (InstantiationException ex) {
-			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.", new Object[0]);
+			FMLLog.severe("[" + References.MOD_NAME + "] Unable to create TileEntity instance from Ladder Dispenser.");
 			return null;
 		}
 	}

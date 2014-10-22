@@ -11,8 +11,7 @@ import se.luppii.ladders.render.model.ModelSturdyLadder;
 
 public class SturdyLadderRenderer extends TileEntitySpecialRenderer {
 
-	public static final ResourceLocation sturdyLadderTexture = new ResourceLocation(References.MOD_ID.toLowerCase(),
-			"textures/models/ironsturdyladder.png");
+	public static final ResourceLocation sturdyLadderTexture = new ResourceLocation(References.MOD_ID.toLowerCase(), "textures/models/ironsturdyladder.png");
 
 	private ModelSturdyLadder modelSturdyLadder = new ModelSturdyLadder();
 

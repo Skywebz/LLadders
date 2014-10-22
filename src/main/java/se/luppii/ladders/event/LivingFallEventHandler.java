@@ -22,8 +22,7 @@ public class LivingFallEventHandler {
 			if (player.onGround) {
 				World world = player.worldObj;
 				// Check all four positions for the ladder, and check for both types of ladders
-				if (world.getBlock(p_x - 1, p_y + 1, p_z) instanceof BlockRopeLadder
-						|| world.getBlock(p_x - 1, p_y + 1, p_z) instanceof BlockSturdyLadder
+				if (world.getBlock(p_x - 1, p_y + 1, p_z) instanceof BlockRopeLadder || world.getBlock(p_x - 1, p_y + 1, p_z) instanceof BlockSturdyLadder
 						|| world.getBlock(p_x - 1, p_y + 1, p_z) instanceof BlockLadderDispenser
 						|| world.getBlock(p_x + 1, p_y + 1, p_z) instanceof BlockRopeLadder
 						|| world.getBlock(p_x + 1, p_y + 1, p_z) instanceof BlockSturdyLadder

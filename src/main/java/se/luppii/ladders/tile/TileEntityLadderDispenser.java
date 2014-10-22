@@ -1,6 +1,5 @@
 package se.luppii.ladders.tile;
 
-import se.luppii.ladders.LLadders;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,12 +7,12 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import se.luppii.ladders.LLadders;
 
 public class TileEntityLadderDispenser extends TileEntityMachineBase implements ISidedInventory {
 
 	private ItemStack[] inventory;
 
-	// private ItemStack inputItem; //Not used for now. Maybe later to filter valid itemstacks for the given slot.
 	private String name;
 
 	private int mode;

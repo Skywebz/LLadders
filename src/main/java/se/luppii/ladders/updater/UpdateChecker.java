@@ -34,8 +34,8 @@ public class UpdateChecker extends Thread {
 			_newVersion = newVersion;
 			_newVersionAvailable = thisVersion.compareTo(newVersion) < 0;
 			if (_newVersionAvailable) {
-				FMLLog.info("[" + References.MOD_NAME + "] A new version of " + References.MOD_NAME + " is available: "
-						+ newVersion.toString() + ".", new Object[0]);
+				FMLLog.info("[" + References.MOD_NAME + "] A new version of " + References.MOD_NAME + " is available: " + newVersion.toString() + ".",
+						new Object[0]);
 			}
 			_checkComplete = true;
 		}

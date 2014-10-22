@@ -11,8 +11,7 @@ import se.luppii.ladders.render.model.ModelVineLadder;
 
 public class VineLadderRenderer extends TileEntitySpecialRenderer {
 
-	public static final ResourceLocation vineLadderTexture = new ResourceLocation(References.MOD_ID.toLowerCase(),
-			"textures/models/vineladder.png");
+	public static final ResourceLocation vineLadderTexture = new ResourceLocation(References.MOD_ID.toLowerCase(), "textures/models/vineladder.png");
 
 	private ModelVineLadder modelVineLadder = new ModelVineLadder();
 
