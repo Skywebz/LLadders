@@ -6,6 +6,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import se.luppii.ladders.block.BlockBridgeBuilder;
 import se.luppii.ladders.block.BlockLadderDispenser;
 import se.luppii.ladders.block.BlockRopeLadder;
 import se.luppii.ladders.block.BlockSturdyLadder;
@@ -17,6 +18,7 @@ import se.luppii.ladders.lib.Config;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.modhelper.IExtension;
 import se.luppii.ladders.proxy.CommonProxy;
+import se.luppii.ladders.tile.TileEntityBridgeBuilder;
 import se.luppii.ladders.tile.TileEntityLadderDispenser;
 import se.luppii.ladders.tile.TileEntityRopeLadder;
 import se.luppii.ladders.tile.TileEntitySturdyLadder;
@@ -44,6 +46,8 @@ public class LLadders {
 	@SidedProxy(clientSide = References.CLIENT_PROXY_LOCATION, serverSide = References.COMMON_PROXY_LOCATION)
 	public static CommonProxy proxy;
 
+	public static Block blockBridgeBuilder;
+
 	public static Block blockLadderDispenser;
 
 	public static Block blockRopeLadder;
@@ -59,6 +63,7 @@ public class LLadders {
 
 		// Load config
 		Config.loadConfig(e);
+		blockBridgeBuilder = new BlockBridgeBuilder();
 		blockLadderDispenser = new BlockLadderDispenser();
 		blockRopeLadder = new BlockRopeLadder(Config.ropeLadderLeftClick.getBoolean(true));
 		blockSturdyLadder = new BlockSturdyLadder(Config.sturdyLadderLeftClick.getBoolean(true));
@@ -70,6 +75,8 @@ public class LLadders {
 		GameRegistry.registerBlock(blockSturdyLadder, ItemBlockLadder.class, blockSturdyLadder.getUnlocalizedName());
 		GameRegistry.registerTileEntity(TileEntityVineLadder.class, "LVineLadder");
 		GameRegistry.registerBlock(blockVineLadder, ItemBlockLadder.class, blockVineLadder.getUnlocalizedName());
+		GameRegistry.registerTileEntity(TileEntityBridgeBuilder.class, "BridgeBuilder");
+		GameRegistry.registerBlock(blockBridgeBuilder, blockBridgeBuilder.getUnlocalizedName());
 		GameRegistry.registerTileEntity(TileEntityLadderDispenser.class, "LadderDispenser");
 		GameRegistry.registerBlock(blockLadderDispenser, blockLadderDispenser.getUnlocalizedName());
 	}
@@ -112,7 +119,7 @@ public class LLadders {
 		// If vanilla rope ladder recipe should be removed.
 		if (!Config.removeVanillaRopeRecipe.getBoolean(true)) {
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockRopeLadder, 4, 0), true, new Object[] { "S S", "PPP", "S S", 'P', "plankWood", 'S',
-				Items.string }));
+					Items.string }));
 		}
 		// Vine Ladder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockVineLadder, 6, 0), true, new Object[] { "V V", "PPP", "V V", 'P', "plankWood", 'V',
@@ -124,12 +131,12 @@ public class LLadders {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "III", "IRI", "ILI", 'I', Items.iron_ingot,
 				'R', Items.redstone, 'L', blockRopeLadder }));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "III", "IRI", "ILI", 'I', Items.iron_ingot,
-			'R', Items.redstone, 'L', blockVineLadder }));
+				'R', Items.redstone, 'L', blockVineLadder }));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "ILI", "IRI", "III", 'I', Items.iron_ingot,
-			'R', Items.redstone, 'L', blockSturdyLadder }));
+				'R', Items.redstone, 'L', blockSturdyLadder }));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "ISI", "IRI", "ILI", 'I', Items.iron_ingot,
-			'R', Items.redstone, 'S', blockSturdyLadder, 'L', blockRopeLadder }));
+				'R', Items.redstone, 'S', blockSturdyLadder, 'L', blockRopeLadder }));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "ISI", "IRI", "ILI", 'I', Items.iron_ingot,
-			'R', Items.redstone, 'S', blockSturdyLadder, 'L', blockVineLadder }));
+				'R', Items.redstone, 'S', blockSturdyLadder, 'L', blockVineLadder }));
 	}
 }
