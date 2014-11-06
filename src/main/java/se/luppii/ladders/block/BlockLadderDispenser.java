@@ -135,22 +135,14 @@ public class BlockLadderDispenser extends BlockContainer {
 			te.readFromNBT(par6ItemStack.getTagCompound());
 		}
 		if (te instanceof TileEntityLadderDispenser) {
-			//int direction = MathHelper.floor_double((double) (par5EntityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-			switch (MathHelper.floor_double((par5EntityLivingBase.rotationYaw * 4F) / 360F + 0.5D) & 3) {
-				case 0:
-					((TileEntityLadderDispenser) te).setFacingDirection(5);
-					break;
-				case 1:
-					((TileEntityLadderDispenser) te).setFacingDirection(3);
-					break;
-				case 2:
-					((TileEntityLadderDispenser) te).setFacingDirection(4);
-					break;
-				case 3:
-					((TileEntityLadderDispenser) te).setFacingDirection(2);
-					break;
-			}
+			((TileEntityLadderDispenser) te).setFacingDirection(determineDirection(par1World, par2, par3, par4, par5EntityLivingBase));
 		}
+	}
+
+	public static int determineDirection(World world, int x, int y, int z, EntityLivingBase entity) {
+
+		int dir = MathHelper.floor_double((double) (entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+		return dir == 0 ? 5 : (dir == 1 ? 3 : (dir == 2 ? 4 : (dir == 3 ? 2 : 5)));
 	}
 
 	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, Block par5) {
