@@ -138,5 +138,8 @@ public class LLadders {
 				'R', Items.redstone, 'S', blockSturdyLadder, 'L', blockRopeLadder }));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockLadderDispenser, 1, 0), true, new Object[] { "ISI", "IRI", "ILI", 'I', Items.iron_ingot,
 				'R', Items.redstone, 'S', blockSturdyLadder, 'L', blockVineLadder }));
+		// Bridge Builder
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockBridgeBuilder, 1, 0), true, new Object[] { "III", "IDI", "IRI", 'I', Items.iron_ingot,
+				'D', Blocks.dispenser, 'R', Items.redstone }));
 	}
 }
