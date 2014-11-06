@@ -1,10 +1,10 @@
 package se.luppii.ladders.tile;
 
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -136,7 +136,9 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 							if (block.renderAsNormalBlock()) {
 								ForgeDirection dir = getFacingDirection();
 								if (canPlaceBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir)) {
+									FMLLog.info("can place block. trying to place.");
 									if (placeBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir)) {
+										FMLLog.info("block placed. saving extension block.");
 										blocksPlaced++;
 										bridgeStack = stack.copy();
 										bridgeStack.stackSize = 1;
@@ -223,11 +225,16 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 		int targetBlockMeta = worldObj.getBlockMetadata(x, y, z);
 		if (block == targetBlock && meta == targetBlockMeta)
 			return placeBlock(block, meta, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
-		else if (block.canPlaceBlockAt(worldObj, x, y, z))
-			return worldObj.setBlock(x, y, z, block) && worldObj.setBlockMetadataWithNotify(x, y, z, meta, 2);
+		else if (block.canPlaceBlockAt(worldObj, x, y, z)) {
+			worldObj.setBlock(x, y, z, block);
+			worldObj.setBlockMetadataWithNotify(x, y, z, meta, 2);
+			return true;
+		}
 		else if (!worldObj.isAirBlock(x, y, z))
 			return false;
-		return worldObj.setBlock(x, y, z, block) && worldObj.setBlockMetadataWithNotify(x, y, z, meta, 2);
+		worldObj.setBlock(x, y, z, block);
+		worldObj.setBlockMetadataWithNotify(x, y, z, meta, 2);
+		return true;
 	}
 
 	private boolean insertItemStack(ItemStack stack) {

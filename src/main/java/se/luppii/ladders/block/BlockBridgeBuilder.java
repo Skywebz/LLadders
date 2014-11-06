@@ -127,29 +127,21 @@ public class BlockBridgeBuilder extends BlockContainer {
 			te.readFromNBT(par6ItemStack.getTagCompound());
 		}
 		if (te instanceof TileEntityBridgeBuilder) {
-			float pitch = par5EntityLivingBase.rotationPitch;
-			if (pitch > 45)
-				((TileEntityBridgeBuilder) te).setFacingDirection(0);
-			else if (pitch < -45)
-				((TileEntityBridgeBuilder) te).setFacingDirection(1);
-			else {
-				int direction = MathHelper.floor_double((double) (par5EntityLivingBase.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-				switch (direction) {
-					case 0: // North
-						((TileEntityBridgeBuilder) te).setFacingDirection(3);
-						break;
-					case 1: // West
-						((TileEntityBridgeBuilder) te).setFacingDirection(4);
-						break;
-					case 2: // South
-						((TileEntityBridgeBuilder) te).setFacingDirection(2);
-						break;
-					case 3: // East
-						((TileEntityBridgeBuilder) te).setFacingDirection(5);
-						break;
-				}
-			}
+			((TileEntityBridgeBuilder) te).setFacingDirection(determineDirection(par1World, par2, par3, par4, par5EntityLivingBase));
 		}
+	}
+
+	public static int determineDirection(World world, int x, int y, int z, EntityLivingBase entity) {
+
+		if (MathHelper.abs((float) entity.posX - (float) x) < 2.0F && MathHelper.abs((float) entity.posZ - (float) z) < 2.0F) {
+			double d0 = entity.posY + 1.8D - entity.yOffset;
+			if (d0 - (double) y > 2.0D)
+				return 1;
+			if ((double) y - d0 > 0.0D)
+				return 0;
+		}
+		int dir = MathHelper.floor_double((double) (entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+		return dir == 0 ? 2 : (dir == 1 ? 5 : (dir == 2 ? 3 : (dir == 3 ? 4 : 3)));
 	}
 
 	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, Block par5) {
