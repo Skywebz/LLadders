@@ -1,6 +1,5 @@
 package se.luppii.ladders.tile;
 
-import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -136,9 +135,7 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 							if (block.renderAsNormalBlock()) {
 								ForgeDirection dir = getFacingDirection();
 								if (canPlaceBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir)) {
-									FMLLog.info("can place block. trying to place.");
 									if (placeBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir)) {
-										FMLLog.info("block placed. saving extension block.");
 										blocksPlaced++;
 										bridgeStack = stack.copy();
 										bridgeStack.stackSize = 1;
