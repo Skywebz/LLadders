@@ -1,6 +1,7 @@
 package se.luppii.ladders.tile;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFence;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -132,9 +133,9 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 						ItemStack stack = getStackInSlot(slot);
 						if (stack != null && stack.stackSize > 0 && blocksPlaced < maxLength) { // If stack contain items and extension has not yet reached max length.
 							Block block = Block.getBlockFromItem(stack.getItem());
-							if (block.renderAsNormalBlock()) {
+							if (validBlock(block, stack.getItemDamage())) {
 								ForgeDirection dir = getFacingDirection();
-								if (canPlaceBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir)) {
+								if (canPlaceBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir, 1)) {
 									if (placeBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir)) {
 										blocksPlaced++;
 										bridgeStack = stack.copy();
@@ -179,14 +180,25 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 		}
 	}
 
-	private boolean canPlaceBlock(Block block, int meta, int x, int y, int z, ForgeDirection dir) {
+	public boolean validBlock(Block block, int meta) {
 
+		if (block.renderAsNormalBlock())
+			return true;
+		else if (block instanceof BlockFence)
+			return true;
+		return false;
+	}
+
+	private boolean canPlaceBlock(Block block, int meta, int x, int y, int z, ForgeDirection dir, int distance) {
+
+		if (distance > maxLength)
+			return false;
 		if (y >= worldObj.getHeight() - 1 || y < 0)
 			return false; // Make sure that we're not trying to place ladders out of the world.
 		Block targetBlock = worldObj.getBlock(x, y, z);
 		int targetBlockMeta = worldObj.getBlockMetadata(x, y, z);
 		if (block == targetBlock && meta == targetBlockMeta)
-			return canPlaceBlock(block, meta, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
+			return canPlaceBlock(block, meta, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir, distance + 1);
 		else if (block.canPlaceBlockAt(worldObj, x, y, z))
 			return true;
 		else if (!worldObj.isAirBlock(x, y, z))
