@@ -54,8 +54,8 @@ public class BlockBridgeBuilder extends BlockContainer {
 
 		TileEntity te = par1IBlockAccess.getTileEntity(par2, par3, par4);
 		if (te != null && te instanceof TileEntityBridgeBuilder) {
-			// Special slot 4 - For custom texture
-			ItemStack itemstack = ((TileEntityBridgeBuilder) te).getStackInSlot(4);
+			// Special slot 1 - For custom texture
+			ItemStack itemstack = ((TileEntityBridgeBuilder) te).getStackInSlot(1);
 			if (itemstack != null) {
 				Block block = Block.getBlockFromItem(itemstack.getItem());
 				if (block != null)
@@ -89,8 +89,8 @@ public class BlockBridgeBuilder extends BlockContainer {
 		TileEntity te = par1IBlockAccess.getTileEntity(par2, par3, par4);
 		int meta = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 		if (te != null && te instanceof TileEntityBridgeBuilder) {
-			// Special slot 4 - For custom texture
-			ItemStack itemstack = ((TileEntityBridgeBuilder) te).getStackInSlot(4);
+			// Special slot 1 - For custom texture
+			ItemStack itemstack = ((TileEntityBridgeBuilder) te).getStackInSlot(1);
 			if (itemstack != null) {
 				Block block = Block.getBlockFromItem(itemstack.getItem());
 				if (block != null && block.renderAsNormalBlock())

@@ -64,7 +64,7 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 	@Override
 	public int getSizeInventory() {
 
-		return 5;
+		return 2;
 	}
 
 	@Override
@@ -113,8 +113,8 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 			itemstack.stackSize = getInventoryStackLimit();
 		}
 		markDirty();
-		// If slot changed is 4 we need to mark the block to update as the texture used has most likely changed.
-		if (i == 4)
+		// If slot changed is 1 we need to mark the block to update as the texture used has most likely changed.
+		if (i == 1)
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
