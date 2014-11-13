@@ -97,6 +97,8 @@ public class BlockBridgeBuilder extends BlockContainer {
 					return block.getIcon(par5, itemstack.getItemDamage());
 			}
 			par5 = ((TileEntityBridgeBuilder) te).getRotatedSide(par5);
+			int ordinal = ((TileEntityBridgeBuilder) te).getFacingDirection().ordinal();
+			return this.getIcon(par5, meta, ordinal);
 		}
 		return this.getIcon(par5, meta);
 	}
@@ -168,6 +170,25 @@ public class BlockBridgeBuilder extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int par1, int par2) {
+
+		switch (par2) {
+			case 0:
+				if (par1 == 2) // Front-Back flip in inventory.
+					par1 = 2;
+				else if (par1 == 3)
+					par1 = 1; // Front-Back flip in inventory.
+				else
+					par1 = 0; // Side
+				return icons[par1];
+			default:
+				FMLLog.warning("[" + References.MOD_NAME + "] Invalid metadata for " + getUnlocalizedName() + ". Metadata received was " + par2 + ".",
+						new Object[0]);
+				return icons[0];
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public IIcon getIcon(int par1, int par2, int ordinal) {
 
 		switch (par2) {
 			case 0:

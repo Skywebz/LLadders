@@ -18,7 +18,7 @@ public class ContainerLadderDispenser extends Container {
 		this.addSlotToContainer(new SlotLaddersOnly(this.tileEntity, 1, 80, 26));
 		this.addSlotToContainer(new SlotLaddersOnly(this.tileEntity, 2, 62, 44));
 		this.addSlotToContainer(new SlotLaddersOnly(this.tileEntity, 3, 80, 44));
-		this.addSlotToContainer(new SlotOpaqueBlocksOnly(this.tileEntity, 4, 135, 35));
+		this.addSlotToContainer(new SlotBlockTexture(this.tileEntity, 4, 135, 35));
 		bindPlayerInventory(playerInventory);
 	}
 

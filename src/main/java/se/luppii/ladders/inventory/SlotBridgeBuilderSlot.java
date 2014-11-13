@@ -6,9 +6,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-public class SlotOpaqueBlocksOnly extends Slot {
+public class SlotBridgeBuilderSlot extends Slot {
 
-	public SlotOpaqueBlocksOnly(IInventory par1iInventory, int par2, int par3, int par4) {
+	public SlotBridgeBuilderSlot(IInventory par1iInventory, int par2, int par3, int par4) {
 
 		super(par1iInventory, par2, par3, par4);
 	}
@@ -24,7 +24,7 @@ public class SlotOpaqueBlocksOnly extends Slot {
 
 		if (par1ItemStack.getItem() instanceof ItemBlock) {
 			Block block = Block.getBlockFromItem(par1ItemStack.getItem());
-			return block.isOpaqueCube() && block.renderAsNormalBlock();
+			return block.renderAsNormalBlock();
 		}
 		return false;
 	}
