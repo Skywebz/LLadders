@@ -1,10 +1,10 @@
 package se.luppii.ladders.tile;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -131,18 +131,16 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 						ticks = 0;
 						int slot = 0;
 						ItemStack stack = getStackInSlot(slot);
-						if (stack != null && stack.stackSize > 0 && blocksPlaced < maxLength) { // If stack contain items and extension has not yet reached max length.
+						if (stack != null && stack.getItem() instanceof ItemBlock && stack.stackSize > 0 && blocksPlaced < maxLength) { // If stack contain items and extension has not yet reached max length.
 							Block block = Block.getBlockFromItem(stack.getItem());
-							if (validBlock(block, stack.getItemDamage())) {
-								ForgeDirection dir = getFacingDirection();
-								if (canPlaceBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir, 1)) {
-									if (placeBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir)) {
-										blocksPlaced++;
-										bridgeStack = stack.copy();
-										bridgeStack.stackSize = 1;
-										decrStackSize(slot, 1);
-										did_work = true;
-									}
+							ForgeDirection dir = getFacingDirection();
+							if (canPlaceBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir, 1)) {
+								if (placeBlock(block, stack.getItemDamage(), xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir)) {
+									blocksPlaced++;
+									bridgeStack = stack.copy();
+									bridgeStack.stackSize = 1;
+									decrStackSize(slot, 1);
+									did_work = true;
 								}
 							}
 						}
@@ -180,15 +178,6 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 		}
 	}
 
-	public boolean validBlock(Block block, int meta) {
-
-		if (block.renderAsNormalBlock())
-			return true;
-		else if (block instanceof BlockFence)
-			return true;
-		return false;
-	}
-
 	private boolean canPlaceBlock(Block block, int meta, int x, int y, int z, ForgeDirection dir, int distance) {
 
 		if (distance > maxLength)
@@ -199,11 +188,9 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 		int targetBlockMeta = worldObj.getBlockMetadata(x, y, z);
 		if (block == targetBlock && meta == targetBlockMeta)
 			return canPlaceBlock(block, meta, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir, distance + 1);
-		else if (block.canPlaceBlockAt(worldObj, x, y, z))
+		else if (worldObj.isAirBlock(x, y, z) && block.canPlaceBlockOnSide(worldObj, x, y, z, 0))
 			return true;
-		else if (!worldObj.isAirBlock(x, y, z))
-			return false;
-		return true;
+		return false;
 	}
 
 	private void removeBlock(int x, int y, int z, ForgeDirection dir) {
@@ -234,16 +221,11 @@ public class TileEntityBridgeBuilder extends TileEntityMachineBase implements IS
 		int targetBlockMeta = worldObj.getBlockMetadata(x, y, z);
 		if (block == targetBlock && meta == targetBlockMeta)
 			return placeBlock(block, meta, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
-		else if (block.canPlaceBlockAt(worldObj, x, y, z)) {
-			worldObj.setBlock(x, y, z, block);
-			worldObj.setBlockMetadataWithNotify(x, y, z, meta, 2);
+		else if (worldObj.isAirBlock(x, y, z) && block.canPlaceBlockOnSide(worldObj, x, y, z, 0)) {
+			worldObj.setBlock(x, y, z, block, meta, 3);
 			return true;
 		}
-		else if (!worldObj.isAirBlock(x, y, z))
-			return false;
-		worldObj.setBlock(x, y, z, block);
-		worldObj.setBlockMetadataWithNotify(x, y, z, meta, 2);
-		return true;
+		return false;
 	}
 
 	private boolean insertItemStack(ItemStack stack) {
