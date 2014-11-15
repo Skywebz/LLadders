@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import se.luppii.ladders.enums.OutputSide;
 import se.luppii.ladders.inventory.ContainerLadderDispenser;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.tile.TileEntityLadderDispenser;
@@ -23,8 +24,8 @@ public class GuiLadderDispenser extends GuiContainer {
 	
 	private GuiButtonExt sideButton;
 	
-	private final String[] sides = {"Top/Bottom", "Right", "Left"};
-
+	private OutputSide side;
+	
 	public GuiLadderDispenser(InventoryPlayer inventoryPlayer, TileEntityLadderDispenser tileEntity) {
 
 		super(new ContainerLadderDispenser(inventoryPlayer, tileEntity));
@@ -58,7 +59,7 @@ public class GuiLadderDispenser extends GuiContainer {
 		int x = (this.width - this.xSize) / 2;
 		int y = (this.height - this.ySize) / 2;
 		
-		this.sideButton = new GuiButtonExt(0, x + 103, y + 68, 65, 12, "Top/Bottom");
+		this.sideButton = new GuiButtonExt(0, x + 103, y + 68, 65, 12, OutputSide.UPDOWN.toString());
 		
 		buttonList.add(this.sideButton);
 		
@@ -71,10 +72,11 @@ public class GuiLadderDispenser extends GuiContainer {
 				int currPlacement = this.te.getPlacement();
 				int newPlacement = (currPlacement + 1) % 3;
 				
-				this.te.setPlacement(newPlacement);
-				this.sideButton.displayString = sides[newPlacement];
 				
+				this.te.setPlacement(newPlacement);
+				this.sideButton.displayString = OutputSide.valueOf(this.sideButton.displayString).next().toString(); // this takes the string, gets the enum of that string, chooses the next enum and converts that back to a string
 				
 		}
 	}
+
 }
