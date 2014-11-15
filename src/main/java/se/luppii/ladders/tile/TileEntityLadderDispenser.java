@@ -20,12 +20,31 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 	private int ticks;
 
 	private boolean working;
+	
+	private int placement;
 
 	public TileEntityLadderDispenser() {
 
-		name = "Ladder Dispenser";
-		inventory = new ItemStack[getSizeInventory()];
-		mode = 0;
+		this.name = "Ladder Dispenser";
+		this.inventory = new ItemStack[getSizeInventory()];
+		this.mode = 0;
+		this.placement = 0;
+	}
+	
+	public void setPlacement(int side) {
+		int[] sides = {0,1,2}; //0 = top/bottom placement, 1 = right side, 2 = left side
+		
+		for (int i = 0; i < sides.length; ++i) {
+			if (side == sides[i]) {
+				this.placement = side;
+				break;
+			}
+			
+		}
+	}
+	
+	public int getPlacement() {
+		return this.placement;
 	}
 
 	public int getMode() {
