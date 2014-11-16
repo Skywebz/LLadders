@@ -248,7 +248,46 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		
 		Block block = worldObj.getBlock(x, y, z);
 		
-		// this below is to figure out which way the Dispenser is facing
+		// this below is to figure out which way the Dispenser is facing and where to put the ladders
+		int[] offsets = this.calcOffsets(block);
+		int xOffset = offsets[0];
+		int vertDir = offsets[1]; //really the y offset, but kept the name for historical reasons
+		int zOffset = offsets[2];
+		
+		if (vertDir == 0 && this.getPlacement() != OutputSide.UPDOWN) {
+			return false;
+		}
+		
+		if (block == ladder) {		
+			return canSetLadder(ladder, x + xOffset, y + vertDir, z + zOffset);
+			
+		} else if (!worldObj.isAirBlock(x + xOffset, y + vertDir, z + zOffset)) {
+			return false;
+		}
+		return true;
+	}
+
+	private boolean setLadder(ItemStack stack, int x, int y, int z, int meta) {
+		if (stack != null && stack.stackSize > 0 && !worldObj.isRemote) {
+			Block block = Block.getBlockFromItem(stack.getItem());
+			if (this.canSetLadder(block, x, y, z)) {
+				
+				if (worldObj.isAirBlock(x, y, z) && worldObj.getActualHeight() >= y) {
+					worldObj.setBlock(x, y, z, block, meta, 2);
+					return true;
+				}
+				if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) {
+					return setLadder(stack, x, y - 1, z, meta);
+				}
+				else if (block == LLadders.blockSturdyLadder) {
+					return setLadder(stack, x, y + 1, z, meta);
+				}
+			}
+		}
+		return false;
+	}
+
+	private int[] calcOffsets(Block block) {
 		ForgeDirection horDir = this.getFacingDirection();
 		int xOffset = 0;
 		int zOffset = 0;
@@ -279,45 +318,19 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 				zOffset = 1;
 		} else { // this shouldn't happen. Means we have an invalid facing direction
 			FMLLog.warning("[" + References.MOD_NAME + "] Got invalid facing direction!");
-			return false;
+			return new int[] {0, 0, 0};
 		}
-			
-		if (block == ladder) {
-			if ((block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) && this.getPlacement() == OutputSide.UPDOWN)
-				vertDir = -1;
-			else if (block == LLadders.blockSturdyLadder && this.getPlacement() == OutputSide.UPDOWN)
-				vertDir = 1;
-			else
-				return false; // Safety measure, should never happen.
-					
-			return canSetLadder(ladder, x + xOffset, y + vertDir, z + zOffset);
-			
-		} else if (!worldObj.isAirBlock(x + xOffset, y + vertDir, z + zOffset)) {
-			return false;
-		}
-		return true;
+		
+		if ((block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) && this.getPlacement() == OutputSide.UPDOWN)
+			vertDir = -1;
+		else if (block == LLadders.blockSturdyLadder && this.getPlacement() == OutputSide.UPDOWN)
+			vertDir = 1;
+		else
+			return new int[] {0, 0, 0}; // Safety measure, should never happen.
+		
+		return new int[] {xOffset, vertDir, zOffset};
 	}
-
-	private boolean setLadder(ItemStack stack, int x, int y, int z, int meta) {
-		if (stack != null && stack.stackSize > 0 && !worldObj.isRemote) {
-			Block block = Block.getBlockFromItem(stack.getItem());
-			if (this.canSetLadder(block, x, y, z)) {
-				
-				if (worldObj.isAirBlock(x, y, z) && worldObj.getActualHeight() >= y) {
-					worldObj.setBlock(x, y, z, block, meta, 2);
-					return true;
-				}
-				if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) {
-					return setLadder(stack, x, y - 1, z, meta);
-				}
-				else if (block == LLadders.blockSturdyLadder) {
-					return setLadder(stack, x, y + 1, z, meta);
-				}
-			}
-		}
-		return false;
-	}
-
+	
 	private boolean insertLadderToDispenser(ItemStack itemstack) {
 
 		if (this.isItemStackInDispenser(itemstack)) {
