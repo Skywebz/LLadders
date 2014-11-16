@@ -45,14 +45,17 @@ public class LLaddersMessageHandler implements IMessageHandler<LLaddersMessage, 
 			
 			World world = ctx.getServerHandler().playerEntity.worldObj;
 			try {
-				TileEntity ladderDispenserEntity = (TileEntityLadderDispenser)world.getTileEntity(x, y, z);
+				TileEntityLadderDispenser ladderDispenserEntity = (TileEntityLadderDispenser)world.getTileEntity(x, y, z);
+				ladderDispenserEntity.setPlacement(side);
+				
 
 			} catch (Exception err) {
 				FMLLog.warning("[" + References.MOD_NAME + "] Didn't receive a LadderDispenser TileEntity. Nothing to do");
 			}
 			
-			return null;
 		}
+		
+		return null;
 	}
 
 }

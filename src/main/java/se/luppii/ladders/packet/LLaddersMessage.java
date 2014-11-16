@@ -36,7 +36,7 @@ public class LLaddersMessage implements IMessage {
 		this.x = ByteBufUtils.readVarInt(buf, 4);
 		this.y = ByteBufUtils.readVarInt(buf, 4);
 		this.z = ByteBufUtils.readVarInt(buf, 4);
-		this.side = OutputSide.valueOf(ByteBufUtils.readUTF8String(buf));
+		this.side = OutputSide.fromInt(ByteBufUtils.readVarInt(buf, 4));
 	}
 
 	/* (non-Javadoc)
@@ -47,7 +47,7 @@ public class LLaddersMessage implements IMessage {
 		ByteBufUtils.writeVarInt(buf, this.x, 4);
 		ByteBufUtils.writeVarInt(buf, this.y, 4);
 		ByteBufUtils.writeVarInt(buf, this.z, 4);
-		ByteBufUtils.writeUTF8String(buf, side.toString());
+		ByteBufUtils.writeVarInt(buf, side.toInt(), 4);
 
 	}
 	

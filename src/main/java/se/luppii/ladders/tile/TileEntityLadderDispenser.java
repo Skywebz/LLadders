@@ -1,5 +1,6 @@
 package se.luppii.ladders.tile;
 
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,7 +8,11 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.ForgeDirection;
 import se.luppii.ladders.LLadders;
+import se.luppii.ladders.block.BlockGenericLadder;
+import se.luppii.ladders.enums.OutputSide;
+import se.luppii.ladders.lib.References;
 
 public class TileEntityLadderDispenser extends TileEntityMachineBase implements ISidedInventory {
 
@@ -21,29 +26,21 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 
 	private boolean working;
 	
-	private int placement;
+	private OutputSide placement;
 
 	public TileEntityLadderDispenser() {
 
 		this.name = "Ladder Dispenser";
 		this.inventory = new ItemStack[getSizeInventory()];
 		this.mode = 0;
-		this.placement = 0;
+		this.placement = OutputSide.UPDOWN;
 	}
 	
-	public void setPlacement(int side) {
-		int[] sides = {0,1,2}; //0 = top/bottom placement, 1 = right side, 2 = left side
-		
-		for (int i = 0; i < sides.length; ++i) {
-			if (side == sides[i]) {
-				this.placement = side;
-				break;
-			}
-			
-		}
+	public void setPlacement(OutputSide side) {
+		this.placement = side;
 	}
 	
-	public int getPlacement() {
+	public OutputSide getPlacement() {
 		return this.placement;
 	}
 
@@ -131,34 +128,43 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 			ticks++;
 			if (getActiveState()) {
 				boolean did_work = false;
-				if (mode == 1 || mode == 2) { // Place ladders. Mode 1 is up, mode 2 is down ladder placement.
-					if (ticks == 6) {
-						ticks = 0;
-						for (int i = 0; i < 2; i++) {
-							int direction = getForgeDirectionToInt(getFacingDirection());
-							for (int slot = 0; slot < getSizeInventory() - 1; slot++) {
-								ItemStack stack = getStackInSlot(slot);
-								if (stack != null) { // If stack contain items.
-									Block ladder = Block.getBlockFromItem(stack.getItem());
-									if ((mode == 1 && ladder == LLadders.blockSturdyLadder)
-											|| (mode == 2 && (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockVineLadder))) { // If block in slot is the same as the ladder we are trying to place - continue.
-										int dir = getLadderDir(ladder); // Direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong.
-										boolean can_place = canSetLadder(ladder, xCoord, yCoord + dir, zCoord, direction); // Flag to see if it is possible to put a ladder at the specific place.
-										if (can_place && dir != 0) { // We have a ladder, and can place it down or up.
-											ItemStack ladderStack = extractLadderFromDispenser(slot);
-											if (ladderStack != null && ladderStack.stackSize > 0) {
-												if (setLadder(ladderStack, xCoord, yCoord + dir, zCoord, direction)) {
-													did_work = true;
-													break;
-												}
-											}
+				if ((mode == 1 || mode == 2) && ticks == 6) { // Place ladders. Mode 1 is up, mode 2 is down ladder placement.
+					ticks = 0;
+					int direction = getForgeDirectionToInt(getFacingDirection());
+					
+					for (int i = 0; i < 2; i++) {
+						
+						for (int slot = 0; slot < getSizeInventory() - 1; slot++) {
+							ItemStack stack = getStackInSlot(slot);
+							
+							if (stack != null) { // If stack contain items.
+								BlockGenericLadder ladder;
+								try {
+									ladder = (BlockGenericLadder)Block.getBlockFromItem(stack.getItem());
+								} catch (Exception err) {
+									FMLLog.warning("[" + References.MOD_NAME + "] LadderDispenser found Block that is not any type of Luppis Ladders Ladder.");
+									return;
+								}
+								if (ladder.isModeConforming(mode)) { // If block in slot is the same as the ladder we are trying to place - continue.
+									int verticalDirection = getLadderDir(ladder); // Direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong.
+									// Figure out which side we want to place the ladders on.
+									int side = this.getPlacement().toInt();
+									
+									ItemStack ladderStack = extractLadderFromDispenser(slot);
+									if (ladderStack != null && ladderStack.stackSize > 0) {
+										if (setLadder(ladderStack, xCoord, yCoord, zCoord, direction)) {
+											did_work = true;
+											break;
 										}
-									}
+										
+									}	
 								}
 							}
-							setMode(getMode() + 1); // This round of Ladder placement finished, go to next mode.
 						}
+						
+						setMode(getMode() + 1); // This round of Ladder placement finished, go to next mode.
 					}
+						
 				}
 				if (mode > 2) {
 					if (did_work) { // If ladder placement is done but there's more work to do, reset to mode 1.
@@ -212,26 +218,6 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		return block == LLadders.blockRopeLadder || block == LLadders.blockSturdyLadder || block == LLadders.blockVineLadder;
 	}
 
-	private boolean canSetLadder(Block ladder, int x, int y, int z, int direction) {
-
-		if (y >= worldObj.getHeight() - 1 || y < 0)
-			return false; // Make sure that we're not trying to place ladders out of the world.
-		Block block = worldObj.getBlock(x, y, z);
-		if (block == ladder) {
-			int dir;
-			if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder)
-				dir = -1;
-			else if (block == LLadders.blockSturdyLadder)
-				dir = 1;
-			else
-				return false; // Safety measure, should never happen.
-			return canSetLadder(ladder, x, y + dir, z, direction);
-		}
-		else if (!worldObj.isAirBlock(x, y, z))
-			return false;
-		return true;
-	}
-
 	private void removeLadder(int x, int y, int z) {
 
 		Block block = worldObj.getBlock(x, y, z);
@@ -254,20 +240,79 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 			}
 		}
 	}
+	
+	private boolean canSetLadder(Block ladder, int x, int y, int z) {
+
+		if (y >= worldObj.getHeight() - 1 || y < 0)
+			return false; // Make sure that we're not trying to place ladders out of the world.
+		
+		Block block = worldObj.getBlock(x, y, z);
+		
+		// this below is to figure out which way the Dispenser is facing
+		ForgeDirection horDir = this.getFacingDirection();
+		int xOffset = 0;
+		int zOffset = 0;
+		
+		int vertDir = 0;
+		
+		if (horDir == ForgeDirection.NORTH) {
+			if (this.getPlacement() == OutputSide.LEFT)
+				xOffset = -1;
+			else if (this.getPlacement() == OutputSide.RIGHT)
+				xOffset = 1;
+			
+		} else if (horDir == ForgeDirection.SOUTH) {
+			if (this.getPlacement() == OutputSide.LEFT)
+				xOffset = 1;
+			else if (this.getPlacement() == OutputSide.RIGHT)
+				xOffset = -1;
+			
+		} else if (horDir == ForgeDirection.WEST) {
+			if (this.getPlacement() == OutputSide.LEFT)
+				zOffset = -1;
+			else if (this.getPlacement() == OutputSide.RIGHT)
+				zOffset = 1;
+		} else if (horDir == ForgeDirection.EAST) {
+			if (this.getPlacement() == OutputSide.LEFT)
+				zOffset = -1;
+			else if (this.getPlacement() == OutputSide.RIGHT)
+				zOffset = 1;
+		} else { // this shouldn't happen. Means we have an invalid facing direction
+			FMLLog.warning("[" + References.MOD_NAME + "] Got invalid facing direction!");
+			return false;
+		}
+			
+		if (block == ladder) {
+			if ((block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) && this.getPlacement() == OutputSide.UPDOWN)
+				vertDir = -1;
+			else if (block == LLadders.blockSturdyLadder && this.getPlacement() == OutputSide.UPDOWN)
+				vertDir = 1;
+			else
+				return false; // Safety measure, should never happen.
+					
+			return canSetLadder(ladder, x + xOffset, y + vertDir, z + zOffset);
+			
+		} else if (!worldObj.isAirBlock(x + xOffset, y + vertDir, z + zOffset)) {
+			return false;
+		}
+		return true;
+	}
 
 	private boolean setLadder(ItemStack stack, int x, int y, int z, int meta) {
-
 		if (stack != null && stack.stackSize > 0 && !worldObj.isRemote) {
 			Block block = Block.getBlockFromItem(stack.getItem());
-			if (worldObj.isAirBlock(x, y, z) && worldObj.getActualHeight() >= y) {
-				worldObj.setBlock(x, y, z, block, meta, 2);
-				return true;
-			}
-			if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) {
-				return setLadder(stack, x, y - 1, z, meta);
-			}
-			else if (block == LLadders.blockSturdyLadder) {
-				return setLadder(stack, x, y + 1, z, meta);
+			if (this.canSetLadder(block, x, y, z)) {
+				
+				if (worldObj.isAirBlock(x, y, z) && worldObj.getActualHeight() >= y) {
+					worldObj.setBlock(x, y, z, block, meta, 2);
+					return true;
+				}
+				if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) {
+					return setLadder(stack, x, y - 1, z, meta);
+				}
+				else if (block == LLadders.blockSturdyLadder) {
+					return setLadder(stack, x, y + 1, z, meta);
+				}
 			}
 		}
 		return false;
@@ -415,6 +460,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		NBTTagList nbttaglist;
 		mode = (int) par1NBTTagCompound.getByte("mode");
 		working = par1NBTTagCompound.getBoolean("working");
+		this.placement = OutputSide.fromInt((int)par1NBTTagCompound.getByte("placement"));
 		if (par1NBTTagCompound.hasKey("Items")) {
 			nbttaglist = par1NBTTagCompound.getTagList("Items", 10);
 			for (int i = 0; i < nbttaglist.tagCount(); i++) {
@@ -433,6 +479,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 
 		super.writeToNBT(par1NBTTagCompound);
 		NBTTagList nbttaglist;
+		par1NBTTagCompound.setByte("placement", (byte)this.placement.toInt());
 		if (inventory.length > 0) {
 			nbttaglist = new NBTTagList();
 			par1NBTTagCompound.setByte("mode", (byte) mode);
