@@ -146,17 +146,27 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 									return;
 								}
 								if (ladder.isModeConforming(mode)) { // If block in slot is the same as the ladder we are trying to place - continue.
-									int verticalDirection = getLadderDir(ladder); // Direction in Y-axis we want to use. 1 is up, -1 is down. 0 is no movement, which means something is wrong.
-									// Figure out which side we want to place the ladders on.
-									int side = this.getPlacement().toInt();
 									
-									ItemStack ladderStack = extractLadderFromDispenser(slot);
-									if (ladderStack != null && ladderStack.stackSize > 0) {
-										if (setLadder(ladderStack, xCoord, yCoord, zCoord, direction)) {
-											did_work = true;
-											break;
-										}
+									//Make all calculations on where we are trying to place our ladder
+									int[] offsets = this.calcOffsets(ladder);
+									int xOffset = offsets[0];
+									int vertDir = offsets[1];
+									int zOffset = offsets[2];
+									
+									if (this.getPlacement() != OutputSide.UPDOWN) {
+											vertDir += -ladder.getDirection();
 										
+									}
+									
+									FMLLog.info("[" + References.MOD_NAME + "] Trying to place ladder at [" + (xCoord + xOffset) + "," + (yCoord + vertDir) + "," + (zCoord + zOffset) + "]");
+									if (this.canSetLadder((BlockGenericLadder)Block.getBlockFromItem(stack.getItem()), xCoord + xOffset, yCoord + vertDir, zCoord + zOffset)) {
+										ItemStack ladderStack = extractLadderFromDispenser(slot);
+										if (ladderStack != null && ladderStack.stackSize > 0) {
+											if (setLadder(ladderStack, xCoord + xOffset, yCoord + vertDir, zCoord, direction)) {
+												did_work = true;
+												break;
+											}
+										}	
 									}	
 								}
 							}
@@ -176,17 +186,32 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 						setActiveState(false);
 					}
 				}
-			}
-			else { // Retract ladders.
+			} else { // Retract ladders.
 				if (ticks == 10) {
+					//Make all calculations on where we are trying to place our ladder
+					int[] offsets = this.calcOffsets();
+					int xOffset = offsets[0];
+					// Don't have a ladder, and thus don't know the y-direction
+					int zOffset = offsets[2];
+					
 					ticks = 0;
 					boolean finished = true;
-					if (canRemoveLadder(xCoord, yCoord - 1, zCoord)) {
-						this.removeLadder(xCoord, yCoord - 1, zCoord);
+					
+					int x = xCoord + xOffset;
+					int y = yCoord;
+					int z = zCoord + zOffset;
+					
+					if (canRemoveLadder(x, y, z)) {
+						this.removeLadder(x, y, z);
 						finished = false;
 					}
-					if (canRemoveLadder(xCoord, yCoord + 1, zCoord)) {
-						this.removeLadder(xCoord, yCoord + 1, zCoord);
+					
+					if (canRemoveLadder(x, y - 1, z)) {
+						this.removeLadder(x, y - 1, z);
+						finished = false;
+					}
+					if (canRemoveLadder(x, y + 1, z)) {
+						this.removeLadder(x, y + 1, z);
 						finished = false;
 					}
 					if (finished) {
@@ -199,17 +224,6 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 				ticks = 0;
 			}
 		}
-	}
-
-	private int getLadderDir(Block ladder) {
-
-		if (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockVineLadder) {
-			return -1;
-		}
-		else if (ladder == LLadders.blockSturdyLadder) {
-			return 1;
-		}
-		return 0;
 	}
 
 	private boolean canRemoveLadder(int x, int y, int z) {
@@ -241,27 +255,18 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		}
 	}
 	
-	private boolean canSetLadder(Block ladder, int x, int y, int z) {
+	private boolean canSetLadder(BlockGenericLadder ladder, int x, int y, int z) {
 
 		if (y >= worldObj.getHeight() - 1 || y < 0)
 			return false; // Make sure that we're not trying to place ladders out of the world.
 		
 		Block block = worldObj.getBlock(x, y, z);
 		
-		// this below is to figure out which way the Dispenser is facing and where to put the ladders
-		int[] offsets = this.calcOffsets(block);
-		int xOffset = offsets[0];
-		int vertDir = offsets[1]; //really the y offset, but kept the name for historical reasons
-		int zOffset = offsets[2];
-		
-		if (vertDir == 0 && this.getPlacement() != OutputSide.UPDOWN) {
-			return false;
-		}
-		
-		if (block == ladder) {		
-			return canSetLadder(ladder, x + xOffset, y + vertDir, z + zOffset);
+		if (ladder == block) {
+			FMLLog.info("[" + References.MOD_NAME + "] Found a ladder trying new coordinate [" + x + ", " + (y + ladder.getDirection()) + ", " + z + "]");
+			return canSetLadder(ladder, x, y + ladder.getDirection(), z);
 			
-		} else if (!worldObj.isAirBlock(x + xOffset, y + vertDir, z + zOffset)) {
+		} else if (!worldObj.isAirBlock(x, y, z)) {
 			return false;
 		}
 		return true;
@@ -269,26 +274,33 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 
 	private boolean setLadder(ItemStack stack, int x, int y, int z, int meta) {
 		if (stack != null && stack.stackSize > 0 && !worldObj.isRemote) {
-			Block block = Block.getBlockFromItem(stack.getItem());
+			BlockGenericLadder block = null;
+			try {
+				block = (BlockGenericLadder)Block.getBlockFromItem(stack.getItem());
+			} catch (Exception err) {
+				FMLLog.warning("[" + References.MOD_NAME + "] not a type of ladder when trying to place ladders from dispenser!");
+				return false;
+			}
 			if (this.canSetLadder(block, x, y, z)) {
-				
+				FMLLog.info("[" + References.MOD_NAME + "] Ladder can be placed at [" + x + ", " + y + ", " + z + "]");
 				if (worldObj.isAirBlock(x, y, z) && worldObj.getActualHeight() >= y) {
 					worldObj.setBlock(x, y, z, block, meta, 2);
 					return true;
 				}
-				if (block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) {
-					return setLadder(stack, x, y - 1, z, meta);
-				}
-				else if (block == LLadders.blockSturdyLadder) {
-					return setLadder(stack, x, y + 1, z, meta);
-				}
+				FMLLog.info("[" + References.MOD_NAME + "] Ladder is of type [" + block.getClass() + "]");
+				FMLLog.info("[" + References.MOD_NAME + "] Direction is [" + block.getDirection() + "]");
+				return setLadder(stack, x, y + block.getDirection(), z, meta);
+				
 			}
 		}
 		return false;
 	}
 
-	private int[] calcOffsets(Block block) {
-		ForgeDirection horDir = this.getFacingDirection();
+	private int[] calcOffsets(BlockGenericLadder block) {
+		ForgeDirection horDir = ForgeDirection.getOrientation(this.getForgeDirectionToInt(this.getFacingDirection())); //ForgeDirections enum seems to be a bit messed up. This fixes it so it will output correctly
+		
+		FMLLog.info("[" + References.MOD_NAME + "] I think I'm facing: [" + horDir.toString() + "]");
+		
 		int xOffset = 0;
 		int zOffset = 0;
 		
@@ -320,15 +332,50 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 			FMLLog.warning("[" + References.MOD_NAME + "] Got invalid facing direction!");
 			return new int[] {0, 0, 0};
 		}
-		
-		if ((block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) && this.getPlacement() == OutputSide.UPDOWN)
-			vertDir = -1;
-		else if (block == LLadders.blockSturdyLadder && this.getPlacement() == OutputSide.UPDOWN)
-			vertDir = 1;
-		else
-			return new int[] {0, 0, 0}; // Safety measure, should never happen.
+		vertDir = block.getDirection();
 		
 		return new int[] {xOffset, vertDir, zOffset};
+	}
+	
+	private int [] calcOffsets() {
+		ForgeDirection horDir = this.getFacingDirection();
+		int xOffset = 0;
+		int zOffset = 0;
+		
+		int vertDir = 0;
+		
+		if (this.getPlacement() != OutputSide.UPDOWN) {
+		
+			if (horDir == ForgeDirection.NORTH) {
+				if (this.getPlacement() == OutputSide.LEFT)
+					xOffset = -1;
+				else if (this.getPlacement() == OutputSide.RIGHT)
+					xOffset = 1;
+				
+			} else if (horDir == ForgeDirection.SOUTH) {
+				if (this.getPlacement() == OutputSide.LEFT)
+					xOffset = 1;
+				else if (this.getPlacement() == OutputSide.RIGHT)
+					xOffset = -1;
+				
+			} else if (horDir == ForgeDirection.WEST) {
+				if (this.getPlacement() == OutputSide.LEFT)
+					zOffset = -1;
+				else if (this.getPlacement() == OutputSide.RIGHT)
+					zOffset = 1;
+			} else if (horDir == ForgeDirection.EAST) {
+				if (this.getPlacement() == OutputSide.LEFT)
+					zOffset = -1;
+				else if (this.getPlacement() == OutputSide.RIGHT)
+					zOffset = 1;
+			} else { // this shouldn't happen. Means we have an invalid facing direction
+				FMLLog.warning("[" + References.MOD_NAME + "] Got invalid facing direction!");
+				return new int[] {0, 0, 0};
+			}
+		}
+		
+		return new int[] {xOffset, vertDir, zOffset};
+		
 	}
 	
 	private boolean insertLadderToDispenser(ItemStack itemstack) {
@@ -471,6 +518,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		super.readFromNBT(par1NBTTagCompound);
 		inventory = new ItemStack[getSizeInventory()];
 		NBTTagList nbttaglist;
+		placement = OutputSide.fromInt((int) par1NBTTagCompound.getByte("placement"));
 		mode = (int) par1NBTTagCompound.getByte("mode");
 		working = par1NBTTagCompound.getBoolean("working");
 		this.placement = OutputSide.fromInt((int)par1NBTTagCompound.getByte("placement"));

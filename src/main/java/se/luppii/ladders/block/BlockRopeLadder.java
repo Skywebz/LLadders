@@ -27,6 +27,7 @@ public class BlockRopeLadder extends BlockGenericLadder implements ITileEntityPr
 		this.setStepSound(soundTypeLadder);
 		this.setBlockName("lladders.block.ropeladder");
 		this.enableLeftClick = par1Boolean;
+		this.direction = -1;
 	}
 
 	public void updateLadderBounds(int par1) {

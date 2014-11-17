@@ -27,6 +27,7 @@ public class BlockVineLadder extends BlockGenericLadder implements ITileEntityPr
 		this.setStepSound(soundTypeLadder);
 		this.setBlockName("lladders.block.vineladder");
 		this.enableLeftClick = par1Boolean;
+		this.direction = -1;
 	}
 
 	public void updateLadderBounds(int par1) {

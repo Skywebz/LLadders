@@ -33,10 +33,10 @@ public class LLaddersMessage implements IMessage {
 	 */
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.x = ByteBufUtils.readVarInt(buf, 4);
-		this.y = ByteBufUtils.readVarInt(buf, 4);
-		this.z = ByteBufUtils.readVarInt(buf, 4);
-		this.side = OutputSide.fromInt(ByteBufUtils.readVarInt(buf, 4));
+		this.x = ByteBufUtils.readVarInt(buf, 5);
+		this.y = ByteBufUtils.readVarInt(buf, 5);
+		this.z = ByteBufUtils.readVarInt(buf, 5);
+		this.side = OutputSide.fromInt(ByteBufUtils.readVarInt(buf, 5));
 	}
 
 	/* (non-Javadoc)
@@ -44,10 +44,10 @@ public class LLaddersMessage implements IMessage {
 	 */
 	@Override
 	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeVarInt(buf, this.x, 4);
-		ByteBufUtils.writeVarInt(buf, this.y, 4);
-		ByteBufUtils.writeVarInt(buf, this.z, 4);
-		ByteBufUtils.writeVarInt(buf, side.toInt(), 4);
+		ByteBufUtils.writeVarInt(buf, this.x, 5);
+		ByteBufUtils.writeVarInt(buf, this.y, 5);
+		ByteBufUtils.writeVarInt(buf, this.z, 5);
+		ByteBufUtils.writeVarInt(buf, side.toInt(), 5);
 
 	}
 	
