@@ -164,6 +164,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 										if (ladderStack != null && ladderStack.stackSize > 0) {
 											if (setLadder(ladderStack, xCoord + xOffset, yCoord + vertDir, zCoord, direction)) {
 												did_work = true;
+												FMLLog.info("[" + References.MOD_NAME + "] did work!");
 												break;
 											}
 										}	
@@ -176,12 +177,13 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 					}
 						
 				}
+				FMLLog.info("[" + References.MOD_NAME + "] mode is [" + mode + "], tick [" + ticks + "], work [" + did_work + "]");
 				if (mode > 2) {
 					if (did_work) { // If ladder placement is done but there's more work to do, reset to mode 1.
 						ticks = 0;
 						mode = 1;
-					}
-					else if (!worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) { // Else if block is unpowered - turn machine off and start retracting ladders.
+					} else if (!worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) { // Else if block is unpowered - turn machine off and start retracting ladders.
+						FMLLog.info("[" + References.MOD_NAME + "] machine off");
 						ticks = 0;
 						setActiveState(false);
 					}
@@ -269,6 +271,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		} else if (!worldObj.isAirBlock(x, y, z)) {
 			return false;
 		}
+		FMLLog.info("[" + References.MOD_NAME + "] Ladder can be placed at [" + x + ", " + y + ", " + z + "]");
 		return true;
 	}
 
@@ -281,17 +284,15 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 				FMLLog.warning("[" + References.MOD_NAME + "] not a type of ladder when trying to place ladders from dispenser!");
 				return false;
 			}
-			if (this.canSetLadder(block, x, y, z)) {
-				FMLLog.info("[" + References.MOD_NAME + "] Ladder can be placed at [" + x + ", " + y + ", " + z + "]");
-				if (worldObj.isAirBlock(x, y, z) && worldObj.getActualHeight() >= y) {
-					worldObj.setBlock(x, y, z, block, meta, 2);
-					return true;
-				}
-				FMLLog.info("[" + References.MOD_NAME + "] Ladder is of type [" + block.getClass() + "]");
-				FMLLog.info("[" + References.MOD_NAME + "] Direction is [" + block.getDirection() + "]");
-				return setLadder(stack, x, y + block.getDirection(), z, meta);
-				
+			
+			if (worldObj.isAirBlock(x, y, z) && worldObj.getActualHeight() >= y) {
+				worldObj.setBlock(x, y, z, block, meta, 2);
+				return true;
 			}
+			
+			return setLadder(stack, x, y + block.getDirection(), z, meta);
+				
+			
 		}
 		return false;
 	}
