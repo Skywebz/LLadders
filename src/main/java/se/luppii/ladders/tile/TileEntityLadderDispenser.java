@@ -27,7 +27,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 	private boolean working;
 	
 	private OutputSide placement;
-
+	
 	public TileEntityLadderDispenser() {
 
 		this.name = "Ladder Dispenser";
@@ -146,25 +146,24 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 									return;
 								}
 								if (ladder.isModeConforming(mode)) { // If block in slot is the same as the ladder we are trying to place - continue.
-									
 									//Make all calculations on where we are trying to place our ladder
-									int[] offsets = this.calcOffsets(ladder);
+									int[] offsets = this.calcOffsets();
 									int xOffset = offsets[0];
-									int vertDir = offsets[1];
-									int zOffset = offsets[2];
+									int vertDir = ladder.getDirection();
+									int zOffset = offsets[1];
 									
 									if (this.getPlacement() != OutputSide.UPDOWN) {
 											vertDir += -ladder.getDirection();
 										
 									}
 									
-									FMLLog.info("[" + References.MOD_NAME + "] Trying to place ladder at [" + (xCoord + xOffset) + "," + (yCoord + vertDir) + "," + (zCoord + zOffset) + "]");
-									if (this.canSetLadder((BlockGenericLadder)Block.getBlockFromItem(stack.getItem()), xCoord + xOffset, yCoord + vertDir, zCoord + zOffset)) {
+									FMLLog.info("[" + References.MOD_NAME + "] Direction: [" + this.getFacingDirection() + "], Coords [" + (xCoord + xOffset) + ", " + (yCoord + vertDir) + ", " + (zCoord + zOffset) + "], placement: [" + this.canSetLadder(ladder, xCoord + xOffset, yCoord + vertDir, zCoord + zOffset) + "]");
+									
+									if (this.canSetLadder(ladder, xCoord + xOffset, yCoord + vertDir, zCoord + zOffset)) {
 										ItemStack ladderStack = extractLadderFromDispenser(slot);
 										if (ladderStack != null && ladderStack.stackSize > 0) {
-											if (setLadder(ladderStack, xCoord + xOffset, yCoord + vertDir, zCoord, direction)) {
+											if (setLadder(ladderStack, xCoord + xOffset, yCoord + vertDir, zCoord + zOffset, direction)) {
 												did_work = true;
-												FMLLog.info("[" + References.MOD_NAME + "] did work!");
 												break;
 											}
 										}	
@@ -177,14 +176,14 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 					}
 						
 				}
-				FMLLog.info("[" + References.MOD_NAME + "] mode is [" + mode + "], tick [" + ticks + "], work [" + did_work + "]");
 				if (mode > 2) {
 					if (did_work) { // If ladder placement is done but there's more work to do, reset to mode 1.
 						ticks = 0;
 						mode = 1;
-					} else if (!worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) { // Else if block is unpowered - turn machine off and start retracting ladders.
-						FMLLog.info("[" + References.MOD_NAME + "] machine off");
+					}
+					if (!worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) { // Else if block is unpowered - turn machine off and start retracting ladders.
 						ticks = 0;
+						mode = 1;
 						setActiveState(false);
 					}
 				}
@@ -194,7 +193,7 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 					int[] offsets = this.calcOffsets();
 					int xOffset = offsets[0];
 					// Don't have a ladder, and thus don't know the y-direction
-					int zOffset = offsets[2];
+					int zOffset = offsets[1];
 					
 					ticks = 0;
 					boolean finished = true;
@@ -235,16 +234,15 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 	}
 
 	private void removeLadder(int x, int y, int z) {
-
 		Block block = worldObj.getBlock(x, y, z);
 		int metadata = worldObj.getBlockMetadata(x, y, z);
 		if (block != LLadders.blockRopeLadder && block != LLadders.blockSturdyLadder && block != LLadders.blockVineLadder) {
 			return;
 		}
-		else if (worldObj.getBlock(x, y - 1, z) == LLadders.blockRopeLadder || worldObj.getBlock(x, y - 1, z) == LLadders.blockVineLadder) { // We want to retract from bottom and up.
+		else if ((worldObj.getBlock(x, y - 1, z) == LLadders.blockRopeLadder || worldObj.getBlock(x, y - 1, z) == LLadders.blockVineLadder) && block != LLadders.blockSturdyLadder) { // We want to retract from bottom and up.
 			removeLadder(x, y - 1, z);
 		}
-		else if (worldObj.getBlock(x, y + 1, z) == LLadders.blockSturdyLadder) { // Or from the top down if sturdy ladders.
+		else if (worldObj.getBlock(x, y + 1, z) == LLadders.blockSturdyLadder && (block != LLadders.blockRopeLadder || block != LLadders.blockVineLadder)) { // Or from the top down if sturdy ladders.
 			removeLadder(x, y + 1, z);
 		}
 		else {
@@ -262,16 +260,15 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		if (y >= worldObj.getHeight() - 1 || y < 0)
 			return false; // Make sure that we're not trying to place ladders out of the world.
 		
-		Block block = worldObj.getBlock(x, y, z);
-		
-		if (ladder == block) {
-			FMLLog.info("[" + References.MOD_NAME + "] Found a ladder trying new coordinate [" + x + ", " + (y + ladder.getDirection()) + ", " + z + "]");
-			return canSetLadder(ladder, x, y + ladder.getDirection(), z);
-			
-		} else if (!worldObj.isAirBlock(x, y, z)) {
-			return false;
+		BlockGenericLadder block; 
+		try {		
+				block = (BlockGenericLadder)worldObj.getBlock(x, y, z); // Try to typecast to a ladder.
+				return canSetLadder(ladder, x, y + ladder.getDirection(), z);
+		} catch (Exception err) {
+			if (!worldObj.isAirBlock(x, y, z))
+				return false;
 		}
-		FMLLog.info("[" + References.MOD_NAME + "] Ladder can be placed at [" + x + ", " + y + ", " + z + "]");
+		
 		return true;
 	}
 
@@ -296,86 +293,54 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		}
 		return false;
 	}
-
-	private int[] calcOffsets(BlockGenericLadder block) {
-		ForgeDirection horDir = ForgeDirection.getOrientation(this.getForgeDirectionToInt(this.getFacingDirection())); //ForgeDirections enum seems to be a bit messed up. This fixes it so it will output correctly
-		
-		FMLLog.info("[" + References.MOD_NAME + "] I think I'm facing: [" + horDir.toString() + "]");
-		
-		int xOffset = 0;
-		int zOffset = 0;
-		
-		int vertDir = 0;
-		
-		if (horDir == ForgeDirection.NORTH) {
-			if (this.getPlacement() == OutputSide.LEFT)
-				xOffset = -1;
-			else if (this.getPlacement() == OutputSide.RIGHT)
-				xOffset = 1;
-			
-		} else if (horDir == ForgeDirection.SOUTH) {
-			if (this.getPlacement() == OutputSide.LEFT)
-				xOffset = 1;
-			else if (this.getPlacement() == OutputSide.RIGHT)
-				xOffset = -1;
-			
-		} else if (horDir == ForgeDirection.WEST) {
-			if (this.getPlacement() == OutputSide.LEFT)
-				zOffset = -1;
-			else if (this.getPlacement() == OutputSide.RIGHT)
-				zOffset = 1;
-		} else if (horDir == ForgeDirection.EAST) {
-			if (this.getPlacement() == OutputSide.LEFT)
-				zOffset = -1;
-			else if (this.getPlacement() == OutputSide.RIGHT)
-				zOffset = 1;
-		} else { // this shouldn't happen. Means we have an invalid facing direction
-			FMLLog.warning("[" + References.MOD_NAME + "] Got invalid facing direction!");
-			return new int[] {0, 0, 0};
-		}
-		vertDir = block.getDirection();
-		
-		return new int[] {xOffset, vertDir, zOffset};
-	}
 	
+	/**
+	 * Calculates offsets X and Z wise for ladder placement
+	 * 
+	 * Calculates where a ladder should be placed in X and Z coords. It uses ForgeDriection. But for some reason ForgeDirection 
+	 * returns the direction rotated on step counter clockwise (North -> West etc). So this code simply looks up what ForgeDirecion
+	 * thinks and then offsets according to the quarter rotation scheme. Hence it does not conform to the enum definition.
+	 * @return Offsets for X and Z coordingat to be added to absolute coords of ladder placement.
+	 */
 	private int [] calcOffsets() {
+		//ForgeDirection horDir = ForgeDirection.getOrientation(this.getForgeDirectionToInt(this.getFacingDirection())); //ForgeDirections enum seems to be a bit messed up. This fixes it so it will output correctly
 		ForgeDirection horDir = this.getFacingDirection();
+				
 		int xOffset = 0;
 		int zOffset = 0;
-		
-		int vertDir = 0;
 		
 		if (this.getPlacement() != OutputSide.UPDOWN) {
 		
 			if (horDir == ForgeDirection.NORTH) {
 				if (this.getPlacement() == OutputSide.LEFT)
-					xOffset = -1;
+					zOffset = -1;
 				else if (this.getPlacement() == OutputSide.RIGHT)
-					xOffset = 1;
+					zOffset = 1;
 				
 			} else if (horDir == ForgeDirection.SOUTH) {
 				if (this.getPlacement() == OutputSide.LEFT)
-					xOffset = 1;
+					zOffset = 1;
 				else if (this.getPlacement() == OutputSide.RIGHT)
-					xOffset = -1;
+					zOffset = -1;
 				
 			} else if (horDir == ForgeDirection.WEST) {
 				if (this.getPlacement() == OutputSide.LEFT)
-					zOffset = -1;
+					xOffset = -1;
 				else if (this.getPlacement() == OutputSide.RIGHT)
-					zOffset = 1;
+					xOffset = 1;
+				
 			} else if (horDir == ForgeDirection.EAST) {
 				if (this.getPlacement() == OutputSide.LEFT)
-					zOffset = -1;
+					xOffset = 1;
 				else if (this.getPlacement() == OutputSide.RIGHT)
-					zOffset = 1;
+					xOffset = -1;
 			} else { // this shouldn't happen. Means we have an invalid facing direction
 				FMLLog.warning("[" + References.MOD_NAME + "] Got invalid facing direction!");
-				return new int[] {0, 0, 0};
+				return new int[] {0, 0};
 			}
 		}
 		
-		return new int[] {xOffset, vertDir, zOffset};
+		return new int[] {xOffset, zOffset};
 		
 	}
 	
