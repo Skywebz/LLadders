@@ -202,19 +202,23 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 					int y = yCoord;
 					int z = zCoord + zOffset;
 					
-					if (canRemoveLadder(x, y, z)) {
-						this.removeLadder(x, y, z);
-						finished = false;
+					if (this.getPlacement() != OutputSide.UPDOWN) {
+						if (canRemoveLadder(x, y, z)) {
+							this.removeLadder(x, y, z);
+							finished = false;
+						}
+					} else {
+						if (canRemoveLadder(x, y - 1, z)) {
+							this.removeLadder(x, y - 1, z);
+							finished = false;
+						}
+						
+						if (canRemoveLadder(x, y + 1, z)) {
+							this.removeLadder(x, y + 1, z);
+							finished = false;
+						}
 					}
 					
-					if (canRemoveLadder(x, y - 1, z)) {
-						this.removeLadder(x, y - 1, z);
-						finished = false;
-					}
-					if (canRemoveLadder(x, y + 1, z)) {
-						this.removeLadder(x, y + 1, z);
-						finished = false;
-					}
 					if (finished) {
 						mode = 0;
 						working = false;
@@ -239,18 +243,30 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		if (block != LLadders.blockRopeLadder && block != LLadders.blockSturdyLadder && block != LLadders.blockVineLadder) {
 			return;
 		}
-		else if ((worldObj.getBlock(x, y - 1, z) == LLadders.blockRopeLadder || worldObj.getBlock(x, y - 1, z) == LLadders.blockVineLadder) && block != LLadders.blockSturdyLadder) { // We want to retract from bottom and up.
+		else if (worldObj.getBlock(x, y - 1, z) == LLadders.blockRopeLadder || worldObj.getBlock(x, y - 1, z) == LLadders.blockVineLadder) { // We want to retract from bottom and up.
 			removeLadder(x, y - 1, z);
 		}
-		else if (worldObj.getBlock(x, y + 1, z) == LLadders.blockSturdyLadder && (block != LLadders.blockRopeLadder || block != LLadders.blockVineLadder)) { // Or from the top down if sturdy ladders.
-			removeLadder(x, y + 1, z);
+		else if (worldObj.getBlock(x, y + 1, z) == LLadders.blockSturdyLadder) { // Or from the top down if sturdy ladders.
+			// This handles special case when there is one Sturdy ladder, and one hanging ladder left
+			if (!((block == LLadders.blockRopeLadder || block == LLadders.blockVineLadder) && worldObj.getBlock(x, y + 1, z) == LLadders.blockSturdyLadder))
+				removeLadder(x, y + 1, z);
+			else {
+				worldObj.setBlockToAir(x, y, z);
+				worldObj.removeTileEntity(x, y, z);
+				ItemStack itemstack = new ItemStack(block, 1, metadata & 12);
+				if (!this.insertLadderToDispenser(itemstack)) {
+					dropBlockAsItem(x, y, z, itemstack);
+				}
+			}
 		}
 		else {
-			worldObj.setBlockToAir(x, y, z);
-			worldObj.removeTileEntity(x, y, z);
-			ItemStack itemstack = new ItemStack(block, 1, metadata & 12);
-			if (!this.insertLadderToDispenser(itemstack)) {
-				dropBlockAsItem(x, y, z, itemstack);
+			if (worldObj.getBlock(x, y - 1, z) != LLadders.blockRopeLadder && worldObj.getBlock(x, y - 1, z) != LLadders.blockVineLadder) { // Don't retract the last sturdy ladder before we have retracted all hanging ladders  
+				worldObj.setBlockToAir(x, y, z);
+				worldObj.removeTileEntity(x, y, z);
+				ItemStack itemstack = new ItemStack(block, 1, metadata & 12);
+				if (!this.insertLadderToDispenser(itemstack)) {
+					dropBlockAsItem(x, y, z, itemstack);
+				}
 			}
 		}
 	}
@@ -267,6 +283,30 @@ public class TileEntityLadderDispenser extends TileEntityMachineBase implements 
 		} catch (Exception err) {
 			if (!worldObj.isAirBlock(x, y, z))
 				return false;
+		}
+		
+		// Try to see if hanging ladders will be able to be placed here
+		if (this.getPlacement() != OutputSide.UPDOWN && (ladder == LLadders.blockRopeLadder || ladder == LLadders.blockVineLadder)) {
+			boolean returnValue = false;
+			int[] offsets = this.calcOffsets();
+			int xOffset = offsets[0];
+			int zOffset = offsets[1];
+			
+			if (worldObj.isSideSolid(x, y + 1, z, ForgeDirection.DOWN))
+				returnValue = true;
+			else if (worldObj.isBlockNormalCubeDefault(x - zOffset, y, z - xOffset, false))
+				returnValue = true;
+			else {
+				try {
+					BlockGenericLadder testBlock = (BlockGenericLadder)worldObj.getBlock(x, y - ladder.getDirection(), z);
+					returnValue = true;
+				} catch (Exception err) {
+					// Another block is above us
+				}
+			}
+			
+			return returnValue;
+			
 		}
 		
 		return true;

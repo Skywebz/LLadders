@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import se.luppii.ladders.LLadders;
 import se.luppii.ladders.lib.References;
 import se.luppii.ladders.tile.TileEntityRopeLadder;
 import cpw.mods.fml.common.FMLLog;
@@ -126,6 +127,9 @@ public class BlockRopeLadder extends BlockGenericLadder implements ITileEntityPr
 			flag = true;
 		}
 		if (metadata == 3 && par1World.isSideSolid(par2 + 1, par3, par4, WEST)) {
+			flag = true;
+		}
+		if (par1World.getBlock(par2, par3 + 1, par4) == LLadders.blockSturdyLadder) {
 			flag = true;
 		}
 		if (!flag) {
